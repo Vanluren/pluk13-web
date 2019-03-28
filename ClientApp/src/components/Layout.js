@@ -7,12 +7,12 @@ export class Layout extends Component {
 
   render () {
     return (
-      <div>
+      <React.Fragment>
         <NavMenu />
         <Container>
           {this.props.children}
         </Container>
-      </div>
+      </React.Fragment>
     );
   }
 }
