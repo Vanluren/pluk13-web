@@ -1,27 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 namespace pluk13_web.Helpers
 {
     public class DBHelper
     {
-
         public MySqlConnection dbConnection;
-        private string serverName;
-        private string databaseName;
-        private string username;
-        private string password;
         public DBHelper()
         {
-            // Set instance variables, maybe from an env file. 
-            serverName = "localhost";
-            databaseName = "Projekt";
-            username = "root";
-            password = string.Empty;
-
-            string createConString = "SERVER=" + serverName + ";" + "DATABASE = " + databaseName + ";" + "UID=" + username + ";" + "PASSWORD=" + password + ";";
-
+            string createConString = "SERVER=157.230.161.29;DATABASE=Projekt;UID=public;PASSWORD='HelloWorldP412345'";
             dbConnection = new MySqlConnection(createConString);
         }
 
@@ -77,7 +66,9 @@ namespace pluk13_web.Helpers
                 CloseDbConnection();
                 dataAdapter.Dispose();
                 return result;
-            } catch(Exception err) {
+            }
+            catch (Exception err)
+            {
                 Console.WriteLine("Could not get the queried data");
                 throw err;
             }
