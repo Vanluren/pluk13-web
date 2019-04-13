@@ -8,7 +8,7 @@ export default function Routing() {
   return (
     <Layout>
       <Route exact path='/' component={Home} />
-      <Route exact path='/overview' component={Overview} />
+      <Route path='/overview' component={Overview} />
     </Layout>
   );
 }
