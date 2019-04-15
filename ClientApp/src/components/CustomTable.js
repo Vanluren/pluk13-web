@@ -22,7 +22,7 @@ const CustomTable = props => {
         <SearchState value={props.searchInputValue} />
         <IntegratedFiltering />
         <TableHeaderRow />
-        {props.showSelection && (
+        {props.showSelect && (
           <TableSelection selectByRowClick highlightRow />
         )}
       </Grid>
