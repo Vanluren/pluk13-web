@@ -12,19 +12,19 @@ import {
   SelectionState
 } from "@devexpress/dx-react-grid";
 
-const CustomTable = (props) => {
+const CustomTable = props => {
   const [selected, handleSelect] = useState([]);
   return (
     <Paper>
       <Grid columns={props.coloumnHeaders} rows={props.dataRows}>
         <Table />
-        <TableHeaderRow />
         <SelectionState selection={selected} onSelectionChange={handleSelect} />
         <SearchState value={props.searchInputValue} />
         <IntegratedFiltering />
-        <Table />
         <TableHeaderRow />
-        <TableSelection selectByRowClick highlightRow />
+        {props.showSelection && (
+          <TableSelection selectByRowClick highlightRow />
+        )}
       </Grid>
     </Paper>
   );
