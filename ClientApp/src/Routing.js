@@ -2,7 +2,7 @@ import React from 'react';
 import { Route } from 'react-router';
 import Layout from './components/Layout';
 import Home from './components/Home';
-import Overview from './Views/Overview/Overview.container';
+import Overview from './Views/Overview';
 
 export default function Routing() {
   return (
