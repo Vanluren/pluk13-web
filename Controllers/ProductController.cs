@@ -14,40 +14,52 @@ namespace pluk13_web.Controllers
     [Route("api/products")]
     public class ProductController : Controller
     {
+
+        public Product GetProductById(int id)
+        {
+            var queryRes = dbHelper.SelectQuery("SELECT * FROM Products WHERE product_id=" + id);
+            if (queryRes.Rows.Count > 0)
+            {
+                Product product = new Product(id, queryRes.Rows[0][1].ToString(), queryRes.Rows[0][2].ToString());
+                product.Brand = queryRes.Rows[0]["brand"].ToString();
+                product.Size = queryRes.Rows[0]["size"].ToString();
+                product.OtherInfo = queryRes.Rows[0]["other_info"].ToString();
+                product.Location = queryRes.Rows[0]["wh_location"].ToString();
+                //product.Type = queryRes.Rows[0]["type"].ToString();
+                return product;
+            }
+            return null;
+        }
         DBHelper dbHelper = new DBHelper();
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<List<Product>> GetAllProducts()
         {
-            List<Product> listOfProducts = new List<Product>();
-            var queryRes = dbHelper.SelectQuery("SELECT * FROM ProductInfo");
-            foreach (DataRow row in queryRes.Rows)
+            var queryRes = dbHelper.SelectQuery("SELECT * FROM Products");
+            if (queryRes.Rows.Count > 0)
             {
-                listOfProducts.Add(new Product((int)row["product_id"], row["product_title"].ToString(), row["wh_location"].ToString()));
+                List<Product> listOfProducts = new List<Product>();
+                foreach (DataRow row in queryRes.Rows)
+                {
+                    Product product = GetProductById((int)row["product_id"]);
+                    listOfProducts.Add(product);
+                }
+                return Ok(listOfProducts);
             }
-            if (listOfProducts.Count <= 0)
-            {
-                return NotFound();
-            }
-            return Ok(listOfProducts);
+            return NotFound();
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Product> GetProductByID(int id)
+        public ActionResult<Product> GetProductByIdAction(int id)
         {
-            var queryRes = dbHelper.SelectQuery("SELECT * FROM ProductInfo WHERE product_id=" + id);
-            if (queryRes.Rows.Count == 0)
+            Product product = GetProductById(id);
+
+            if (product != null)
             {
-                return NotFound();
+                return Ok(product);
             }
-            Product product = new Product(id, queryRes.Rows[0][1].ToString(), queryRes.Rows[0][2].ToString());
-            //product.Type = queryRes.Rows[0]["type"].ToString();
-            product.Brand = queryRes.Rows[0]["brand"].ToString();
-            product.Size = queryRes.Rows[0]["size"].ToString();
-            product.OtherInfo = queryRes.Rows[0]["other_info"].ToString();
-            product.Location = queryRes.Rows[0]["wh_location"].ToString();
-            return Ok(product);
+            return NotFound();
 
         }
 
@@ -60,7 +72,7 @@ namespace pluk13_web.Controllers
             string location = value.GetValue("location").ToString();
 
             string statement =
-            "INSERT INTO ProductInfo (product_title, wh_location) VALUES (" + title + ", " + location + ");";
+            "INSERT INTO Products (product_title, wh_location) VALUES (" + title + ", " + location + ");";
             bool res = dbHelper.InsertQuery(statement);
             return CreatedAtAction(nameof(CreateProduct), posted);
         }
@@ -68,7 +80,7 @@ namespace pluk13_web.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteProduct(int id)
         {
-            dbHelper.DeleteQuery("DELETE FROM ProductInfo WHERE product_id=" + id + ";");
+            dbHelper.DeleteQuery("DELETE FROM Products WHERE product_id=" + id + ";");
             string response = "Deleted product: " + id;
             return AcceptedAtAction(nameof(GetAllProducts), response);
         }
