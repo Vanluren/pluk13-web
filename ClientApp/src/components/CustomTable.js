@@ -28,13 +28,17 @@ const CustomTable = props => {
           <GroupingState grouping={[{ columnName: props.groupOnColumn }]} />
         )}
         {props.groupOnColumn && <IntegratedGrouping />}
-        <Table
-          noDataRowComponent={() => (
-            <LoaderWrapper>
-              <StyledLoader />
-            </LoaderWrapper>
-          )}
-        />
+        {props.loading ? (
+          <Table
+            bodyComponent={() => (
+              <LoaderWrapper>
+                <StyledLoader />
+              </LoaderWrapper>
+            )}
+          />
+        ) : (
+          <Table />
+        )}
         <TableHeaderRow />
         {props.group && <TableGroupRow />}
         {props.showSelect && <TableSelection selectByRowClick highlightRow />}

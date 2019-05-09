@@ -111,6 +111,7 @@ class Overview extends Component {
                   coloumnHeaders={productsHeader}
                   dataRows={products}
                   searchInputValue={searchInputValue}
+                  loading={products.length <= 0}
                 />
               )}
             />
@@ -123,6 +124,7 @@ class Overview extends Component {
                   dataRows={gifts}
                   searchInputValue={searchInputValue}
                   groupOnColumn="giftTitle"
+                  loading={gifts.length <= 0}
                 />
               )}
             />
