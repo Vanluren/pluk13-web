@@ -8,107 +8,58 @@ import { styled as MUIStyled } from "@material-ui/styles";
 import { Button } from "@material-ui/core";
 import SearchField from "../components/SearchField";
 import CustomTable from "../components/CustomTable";
+import { getGifts, getProducts } from "../util/dataFetcher";
 
 class Overview extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      productsTableData: {
-        bodyData: [
-          {
-            productId: 112312,
-            title: "ny titel",
-            type: "Bitz",
-            size: "450g",
-            brand: "Joachim Bitz",
-            otherInfo:
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-            location: "A-2-2-2"
-          },
-          {
-            productId: 29890,
-            title: "Det her er en titel",
-            type: "Morgenthaler",
-            size: "450g",
-            brand: "Kim Nielsen",
-            otherInfo:
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-            location: "B-2-3-1"
-          }
-        ],
-        headerData: [
-          { name: "productId", disablePadding: false, title: "Id" },
-          { name: "title", disablePadding: false, title: "Titel" },
-          { name: "type", disablePadding: false, title: "Type" },
-          { name: "size", disablePadding: false, title: "Størrelse" },
-          { name: "brand", disablePadding: false, title: "Mærke" },
-          { name: "otherInfo", disablePadding: false, title: "Info" },
-          { name: "location", disablePadding: false, title: "Placering" }
-        ]
-      },
-      giftsTableData: {
-        bodyData: [
-          {
-            giftId: 1,
-            giftTitle: "Gift Title",
-            contents: [
-              {
-                productId: 112312,
-                title: "ny titel",
-                type: "Bitz",
-                size: "450g",
-                brand: "Joachim Bitz",
-                otherInfo:
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                location: "A-2-2-2"
-              },
-              {
-                productId: 29890,
-                title: "Det her er en titel",
-                type: "Morgenthaler",
-                size: "450g",
-                brand: "Kim Nielsen",
-                otherInfo:
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                location: "B-2-3-1"
-              }
-            ]
-          },
-          {
-            giftId: 2,
-            giftTitle: "Some Other Gift Title",
-            contents: [
-              {
-                productId: 1122312,
-                title: "ny titel",
-                type: "Bitz",
-                size: "450g",
-                brand: "Joachim Bitz",
-                otherInfo:
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                location: "A-2-2-2"
-              },
-              {
-                productId: 292890,
-                title: "Det her er en titel",
-                type: "Morgenthaler",
-                size: "450g",
-                brand: "Kim Nielsen",
-                otherInfo:
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                location: "B-2-3-1"
-              }
-            ]
-          }
-        ],
-        headerData: [
-          { name: "giftId", disablePadding: false, title: "Gave Id" },
-          { name: "giftTitle", disablePadding: false, title: "Gave Titel" },
-          { name: "contains", disablePadding: false, title: "Contents" }
-        ]
-      },
-      searchInputValue: ""
+      loading: false,
+      searchInputValue: "",
+      gifts: [],
+      products: [],
+      productsHeader: [
+        { name: "productId", disablePadding: false, title: "Id" },
+        { name: "title", disablePadding: false, title: "Titel" },
+        { name: "type", disablePadding: false, title: "Type" },
+        { name: "size", disablePadding: false, title: "Størrelse" },
+        { name: "brand", disablePadding: false, title: "Mærke" },
+        { name: "otherInfo", disablePadding: false, title: "Info" },
+        { name: "location", disablePadding: false, title: "Placering" }
+      ],
+      giftsHeader: [
+        { name: "giftId", disablePadding: false, title: "Gave Id" },
+        {
+          name: "title",
+          disablePadding: false,
+          title: "Gave Titel"
+        },
+        {
+          name: "contents",
+          disablePadding: false,
+          title: "Contents"
+        }
+      ]
     };
+  }
+  componentDidMount() {
+    getGifts().then(res => {
+      console.log(res);
+      if (res) {
+        this.setState({
+          loading: false,
+          gifts: res
+        });
+      }
+    });
+    getProducts().then(res => {
+      if (res) {
+        this.setState({
+          loading: false,
+          products: res
+        });
+      }
+    });
   }
   deleteOnClickHandler = id => {
     console.log(id);
@@ -124,7 +75,13 @@ class Overview extends Component {
   handleSelect = selected => this.setState({ selected });
   isSelected = id => this.state.selected.indexOf(id) !== -1;
   render() {
-    const { searchInputValue, productsTableData, giftsTableData } = this.state;
+    const {
+      searchInputValue,
+      products,
+      productsHeader,
+      gifts,
+      giftsHeader
+    } = this.state;
     return (
       <Container>
         <TopWrapperRow>
@@ -151,8 +108,8 @@ class Overview extends Component {
               path="/overview/products"
               component={() => (
                 <CustomTable
-                  coloumnHeaders={productsTableData.headerData}
-                  dataRows={productsTableData.bodyData}
+                  coloumnHeaders={productsHeader}
+                  dataRows={products}
                   searchInputValue={searchInputValue}
                 />
               )}
@@ -162,8 +119,8 @@ class Overview extends Component {
               path="/overview/gifts"
               component={() => (
                 <CustomTable
-                  coloumnHeaders={giftsTableData.headerData}
-                  dataRows={giftsTableData.bodyData}
+                  coloumnHeaders={giftsHeader}
+                  dataRows={gifts}
                   searchInputValue={searchInputValue}
                   groupOnColumn="giftTitle"
                 />
