@@ -1,16 +1,14 @@
 import React from 'react';
 import { Route } from 'react-router';
-import { Layout } from './components/Layout';
-import { Home } from './components/Home';
-import { FetchData } from './components/FetchData';
-import { Counter } from './components/Counter';
+import Layout from './components/Layout';
+import Home from './components/Home';
+import Overview from './Views/Overview';
 
 export default function Routing() {
   return (
     <Layout>
       <Route exact path='/' component={Home} />
-      <Route path='/counter' component={Counter} />
-      <Route path='/fetch-data' component={FetchData} />
+      <Route path='/overview' component={Overview} />
     </Layout>
   );
 }
