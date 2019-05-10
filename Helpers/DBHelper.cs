@@ -10,7 +10,8 @@ namespace pluk13_web.Helpers
         public MySqlConnection dbConnection;
         public DBHelper()
         {
-            string createConString = "SERVER=157.230.161.29;DATABASE=Projekt;UID=public;PASSWORD='HelloWorldP412345'";
+            //string createConString = "SERVER=157.230.161.29;DATABASE=Projekt;UID=public;PASSWORD='HelloWorldP412345'";
+            string createConString = "SERVER=localhost;DATABASE=Projekt;UID=root;PASSWORD=''";
             dbConnection = new MySqlConnection(createConString);
         }
 
