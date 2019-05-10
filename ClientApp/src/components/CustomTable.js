@@ -6,24 +6,46 @@ import {
   Table,
   TableHeaderRow,
   TableSelection,
-  TableGroupRow
+  TableGroupRow,
+  TableEditColumn,
+  TableEditRow
 } from "@devexpress/dx-react-grid-material-ui";
 import {
   SearchState,
   IntegratedFiltering,
   SelectionState,
   GroupingState,
-  IntegratedGrouping
+  IntegratedGrouping,
+  EditingState
 } from "@devexpress/dx-react-grid";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 const CustomTable = props => {
+  const commitChanges = ({ added, changed, deleted }) => {
+    if (added) {
+      props.addNewFunc(added);
+    }
+    if (changed) {
+      props.changedFunc(changed);
+    }
+    if (deleted) {
+      props.deleteFunc(deleted);
+    }
+  };
   return (
     <Paper>
-      <Grid columns={props.coloumnHeaders} rows={props.dataRows}>
+      <Grid
+        columns={props.coloumnHeaders}
+        rows={props.dataRows}
+        getRowId={props.getRowId}
+      >
         <SearchState value={props.searchInputValue} />
         <SelectionState />
         <IntegratedFiltering />
+        <EditingState
+          onCommitChanges={commitChanges}
+          columnExtensions={props.disabledInEditing}
+        />
         {props.groupOnColumn && (
           <GroupingState grouping={[{ columnName: props.groupOnColumn }]} />
         )}
@@ -40,6 +62,8 @@ const CustomTable = props => {
           <Table />
         )}
         <TableHeaderRow />
+        <TableEditRow />
+        <TableEditColumn showAddCommand showEditCommand showDeleteCommand />
         {props.group && <TableGroupRow />}
         {props.showSelect && <TableSelection selectByRowClick highlightRow />}
       </Grid>
@@ -47,7 +71,7 @@ const CustomTable = props => {
   );
 };
 
-const LoaderWrapper = styled.td`
+const LoaderWrapper = styled.tr`
   left: 50%;
   position: relative;
 `;
