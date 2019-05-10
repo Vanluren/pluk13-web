@@ -8,7 +8,6 @@ export class NavMenu extends Component {
 
   constructor (props) {
     super(props);
-
     this.toggleNavbar = this.toggleNavbar.bind(this);
     this.state = {
       collapsed: true
@@ -31,10 +30,13 @@ export class NavMenu extends Component {
             <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
               <ul className="navbar-nav flex-grow">
                 <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
+                  <NavLink tag={Link} className="text-dark" to="/">Plukliste</NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink tag={Link} className="text-dark" to="/overview/products">Oversigt</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink tag={Link} className="text-dark" to="/history">Historik</NavLink>
                 </NavItem>
               </ul>
             </Collapse>
