@@ -44,7 +44,6 @@ class Overview extends Component {
   }
   componentDidMount() {
     getGifts().then(res => {
-      console.log(res);
       if (res) {
         this.setState({
           loading: false,
@@ -61,11 +60,54 @@ class Overview extends Component {
       }
     });
   }
-  deleteOnClickHandler = id => {
-    console.log(id);
+  deleteProductOnClickHandler = params => {
+    const id = params[0];
+    fetch(`/api/products/${id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" }
+    })
+      .then(res => res.json())
+      .then(res => {
+        this.setState({ products: res });
+      });
   };
-  editOnClickHandler = id => {
-    console.log(id);
+  editProductOnClickHandler = params => {
+    const id = Object.keys(params)[0];
+    const body = {
+      ...this.state.products[id],
+      ...Object.values(params)[0]
+    };
+
+    fetch(`/api/products/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    })
+      .then(res => res.json())
+      .then(res => this.setState({ products: res }));
+  };
+  newProductOnClick = params => {
+    const body = {
+      title: null,
+      location: null,
+      brand: null,
+      otherInfo: null,
+      size: null,
+      type: null,
+      ...params[0]
+    };
+
+    fetch(`/api/products`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    })
+      .then(res => res.json())
+      .then(res => {
+        this.setState({
+          products: [...this.state.products, res]
+        });
+      });
   };
 
   searchOnChange = event => {
@@ -80,7 +122,8 @@ class Overview extends Component {
       products,
       productsHeader,
       gifts,
-      giftsHeader
+      giftsHeader,
+      loading
     } = this.state;
     return (
       <Container>
@@ -111,7 +154,17 @@ class Overview extends Component {
                   coloumnHeaders={productsHeader}
                   dataRows={products}
                   searchInputValue={searchInputValue}
-                  loading={products.length <= 0}
+                  loading={products.length <= 0 || loading}
+                  addNewFunc={this.newProductOnClick}
+                  changedFunc={this.editProductOnClickHandler}
+                  deleteFunc={this.deleteProductOnClickHandler}
+                  disabledInEditing={[
+                    {
+                      columnName: "productId",
+                      editingEnabled: false
+                    }
+                  ]}
+                  getRowId={row => row.productId}
                 />
               )}
             />
@@ -125,6 +178,12 @@ class Overview extends Component {
                   searchInputValue={searchInputValue}
                   groupOnColumn="giftTitle"
                   loading={gifts.length <= 0}
+                  disabledInEditing={[
+                    {
+                      columnName: "giftId",
+                      editingEnabled: false
+                    }
+                  ]}
                 />
               )}
             />
