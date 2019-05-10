@@ -151,7 +151,8 @@ namespace pluk13_web.Controllers
                     postedProduct.ProductId = id;
                     conn.Close();
 
-                    return Ok(postedProduct);
+
+                    return Ok(GetAllProducts());
                 }
                 catch (MySqlException error)
                 {
