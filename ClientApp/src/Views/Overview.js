@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
 import styled from "styled-components";
 import { Container, Row, Col } from "reactstrap";
 import { withRouter } from "react-router";
@@ -7,10 +6,9 @@ import { NavLink, Switch, Route } from "react-router-dom";
 import { styled as MUIStyled } from "@material-ui/styles";
 import { Button } from "@material-ui/core";
 import SearchField from "../components/SearchField";
-import CustomTable from "../components/CustomTable";
+import ProductTable from "../components/ProductTable";
 import GiftTable from "../components/GiftTable";
 import { getGifts, getProducts } from "../util/dataFetcher";
-import { access } from "fs";
 
 class Overview extends Component {
   constructor(props) {
@@ -27,19 +25,6 @@ class Overview extends Component {
         { name: "brand", disablePadding: false, title: "Mærke" },
         { name: "otherInfo", disablePadding: false, title: "Info" },
         { name: "location", disablePadding: false, title: "Placering" }
-      ],
-      giftsHeader: [
-        { name: "giftId", disablePadding: false, title: "Gave Id" },
-        {
-          name: "giftTitle",
-          disablePadding: false,
-          title: "Gave Titel"
-        },
-        {
-          name: "contents",
-          disablePadding: false,
-          title: "Indhold"
-        }
       ]
     };
   }
@@ -116,6 +101,12 @@ class Overview extends Component {
     this.setState({ searchInputValue: event.target.value });
   };
 
+  setGifts = newGifts => {
+    this.setState({
+      gifts: newGifts
+    });
+  };
+
   handleSelect = selected => this.setState({ selected });
   isSelected = id => this.state.selected.indexOf(id) !== -1;
   render() {
@@ -152,7 +143,7 @@ class Overview extends Component {
               exact
               path="/overview/products"
               component={() => (
-                <CustomTable
+                <ProductTable
                   coloumnHeaders={productsHeader}
                   dataRows={products}
                   searchInputValue={searchInputValue}
@@ -182,6 +173,7 @@ class Overview extends Component {
                   groupOnColumn="giftId"
                   loading={gifts.length <= 0}
                   getRowId={row => row.giftId}
+                  setGifts={this.setGifts}
                   editable
                 />
               )}

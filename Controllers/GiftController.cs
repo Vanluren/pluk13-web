@@ -140,7 +140,7 @@ namespace pluk13_web.Controllers
                 command.ExecuteNonQuery();
                 conn.Close();
 
-                return CreatedAtAction(nameof(CreateGift), GetGiftProducts(giftId));
+                return CreatedAtAction(nameof(CreateGift), GetAllGifts());
             }
             catch (MySqlException error)
             {

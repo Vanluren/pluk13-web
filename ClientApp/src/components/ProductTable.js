@@ -7,7 +7,6 @@ import {
   Table,
   TableHeaderRow,
   TableSelection,
-  TableGroupRow,
   TableEditColumn,
   TableEditRow
 } from "@devexpress/dx-react-grid-material-ui";
@@ -15,14 +14,19 @@ import {
   SearchState,
   IntegratedFiltering,
   SelectionState,
-  GroupingState,
-  IntegratedGrouping,
   EditingState
 } from "@devexpress/dx-react-grid";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-const CustomTable = props => {
-  console.log(props);
+const ProductTable = props => {
+  const productsHeader = [
+    { name: "productId", disablePadding: false, title: "Id" },
+    { name: "productTitle", disablePadding: false, title: "Titel" },
+    { name: "size", disablePadding: false, title: "Størrelse" },
+    { name: "brand", disablePadding: false, title: "Mærke" },
+    { name: "otherInfo", disablePadding: false, title: "Info" },
+    { name: "location", disablePadding: false, title: "Placering" }
+  ];
   const commitChanges = ({ added, changed, deleted }) => {
     if (added) {
       props.addNewFunc(added);
@@ -37,7 +41,7 @@ const CustomTable = props => {
   return (
     <Paper>
       <Grid
-        columns={props.coloumnHeaders}
+        columns={productsHeader}
         rows={props.dataRows}
         getRowId={props.getRowId}
       >
@@ -96,4 +100,4 @@ const StyledLoader = styled(CircularProgress)`
   margin: 25px;
 `;
 
-export default CustomTable;
+export default ProductTable;
