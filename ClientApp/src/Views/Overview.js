@@ -8,7 +8,9 @@ import { styled as MUIStyled } from "@material-ui/styles";
 import { Button } from "@material-ui/core";
 import SearchField from "../components/SearchField";
 import CustomTable from "../components/CustomTable";
+import GiftTable from "../components/GiftTable";
 import { getGifts, getProducts } from "../util/dataFetcher";
+import { access } from "fs";
 
 class Overview extends Component {
   constructor(props) {
@@ -20,8 +22,7 @@ class Overview extends Component {
       products: [],
       productsHeader: [
         { name: "productId", disablePadding: false, title: "Id" },
-        { name: "title", disablePadding: false, title: "Titel" },
-        { name: "type", disablePadding: false, title: "Type" },
+        { name: "productTitle", disablePadding: false, title: "Titel" },
         { name: "size", disablePadding: false, title: "Størrelse" },
         { name: "brand", disablePadding: false, title: "Mærke" },
         { name: "otherInfo", disablePadding: false, title: "Info" },
@@ -30,18 +31,19 @@ class Overview extends Component {
       giftsHeader: [
         { name: "giftId", disablePadding: false, title: "Gave Id" },
         {
-          name: "title",
+          name: "giftTitle",
           disablePadding: false,
           title: "Gave Titel"
         },
         {
           name: "contents",
           disablePadding: false,
-          title: "Contents"
+          title: "Indhold"
         }
       ]
     };
   }
+
   componentDidMount() {
     getGifts().then(res => {
       if (res) {
@@ -165,6 +167,7 @@ class Overview extends Component {
                     }
                   ]}
                   getRowId={row => row.productId}
+                  editable
                 />
               )}
             />
@@ -172,18 +175,14 @@ class Overview extends Component {
               exact
               path="/overview/gifts"
               component={() => (
-                <CustomTable
+                <GiftTable
                   coloumnHeaders={giftsHeader}
                   dataRows={gifts}
                   searchInputValue={searchInputValue}
-                  groupOnColumn="giftTitle"
+                  groupOnColumn="giftId"
                   loading={gifts.length <= 0}
-                  disabledInEditing={[
-                    {
-                      columnName: "giftId",
-                      editingEnabled: false
-                    }
-                  ]}
+                  getRowId={row => row.giftId}
+                  editable
                 />
               )}
             />

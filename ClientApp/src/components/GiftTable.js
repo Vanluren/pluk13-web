@@ -6,67 +6,61 @@ import {
   Grid,
   Table,
   TableHeaderRow,
-  TableSelection,
-  TableGroupRow,
+  TableTreeColumn,
   TableEditColumn,
   TableEditRow
 } from "@devexpress/dx-react-grid-material-ui";
 import {
+  EditingState,
+  TreeDataState,
+  CustomTreeData,
   SearchState,
-  IntegratedFiltering,
-  SelectionState,
-  GroupingState,
-  IntegratedGrouping,
-  EditingState
+  IntegratedFiltering
 } from "@devexpress/dx-react-grid";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-const CustomTable = props => {
-  console.log(props);
-  const commitChanges = ({ added, changed, deleted }) => {
-    if (added) {
-      props.addNewFunc(added);
-    }
-    if (changed) {
-      props.changedFunc(changed);
-    }
-    if (deleted) {
-      props.deleteFunc(deleted);
-    }
-  };
+const GiftTable = props => {
+  const getChildRows = (row, rootRows) => (row ? row.contents : rootRows);
+
+  const columns = [
+    { name: "giftId", disablePadding: false, title: "Gave Id" },
+    { name: "giftTitle", disablePadding: false, title: "Gave Navn" },
+    { name: "productId", disablePadding: false, title: "Id" },
+    { name: "productTitle", disablePadding: false, title: "Titel" },
+    { name: "size", disablePadding: false, title: "Størrelse" },
+    { name: "brand", disablePadding: false, title: "Mærke" },
+    { name: "otherInfo", disablePadding: false, title: "Info" },
+    { name: "location", disablePadding: false, title: "Placering" },
+    { name: "productQuantity", disablePadding: false, title: "Antal" }
+  ];
   return (
-    <Paper>
-      <Grid
-        columns={props.coloumnHeaders}
-        rows={props.dataRows}
-        getRowId={props.getRowId}
-      >
+    <Paper style={{ position: "relative" }}>
+      <Grid columns={columns} rows={props.dataRows} getRowId={props.getRowId}>
         <SearchState value={props.searchInputValue} />
-        <SelectionState />
         <IntegratedFiltering />
+        <TreeDataState />
         {props.editable && (
           <EditingState
-            onCommitChanges={commitChanges}
-            columnExtensions={props.disabledInEditing}
+            columnExtensions={[
+              {
+                columnName: "giftId",
+                editingEnabled: false
+              },
+              {
+                columnName: "giftTitle",
+                editingEnabled: false
+              }
+            ]}
           />
         )}
-        {props.loading ? (
-          <Table
-            bodyComponent={() => (
-              <LoaderWrapper>
-                <StyledLoader />
-              </LoaderWrapper>
-            )}
-          />
-        ) : (
-          <Table />
-        )}
+        <CustomTreeData getChildRows={getChildRows} />
+        <Table />
         <TableHeaderRow />
         {props.editable && <TableEditRow />}
         {props.editable && (
           <TableEditColumn showAddCommand showEditCommand showDeleteCommand />
         )}
-        {props.showSelect && <TableSelection selectByRowClick highlightRow />}
+        <TableTreeColumn for="giftId" />
         <Getter
           name="tableColumns"
           computed={({ tableColumns }) => {
@@ -96,4 +90,4 @@ const StyledLoader = styled(CircularProgress)`
   margin: 25px;
 `;
 
-export default CustomTable;
+export default GiftTable;
