@@ -78,7 +78,7 @@ namespace pluk13_web.Controllers
         public ActionResult<Product> CreateProduct([FromBody]JObject value)
         {
 
-            string title = value.GetValue("title").ToString();
+            string title = value.GetValue("productTitle").ToString();
             string location = value.GetValue("location").ToString();
             // string type = value.GetValue("type").ToString();
             string size = value.GetValue("size").ToString();
@@ -119,7 +119,7 @@ namespace pluk13_web.Controllers
             Product product = GetProductById(id);
             if (product != null)
             {
-                string title = newProductInfo.GetValue("title").ToString();
+                string title = newProductInfo.GetValue("productTitle").ToString();
                 string location = newProductInfo.GetValue("location").ToString();
                 string size = newProductInfo.GetValue("size").ToString();
                 string brand = newProductInfo.GetValue("brand").ToString();

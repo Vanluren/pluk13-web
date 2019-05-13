@@ -37,7 +37,7 @@ namespace pluk13_web.Controllers
             if (gift != null)
             {
                 var query = dbHelper.SelectQuery(@"SELECT
-                                                    g.*, gc.product_id
+                                                    g.gift_id, gc.product_id, gc.quantity
                                                 FROM
                                                     Projekt.Gifts g
                                                         INNER JOIN
@@ -49,8 +49,13 @@ namespace pluk13_web.Controllers
                     List<Product> productsInGift = new List<Product>();
                     foreach (DataRow row in query.Rows)
                     {
-                        Product product = new ProductController().GetProductById((int)row["product_id"]);
-                        productsInGift.Add(product);
+                        if ((int)row["quantity"] != 0)
+                        {
+                            Product product = new ProductController().GetProductById((int)row["product_id"]);
+                            product.ProductQuantity = (int)row["quantity"];
+                            productsInGift.Add(product);
+                        }
+
                     }
                     gift.Contents = productsInGift;
                     return gift;
@@ -80,7 +85,7 @@ namespace pluk13_web.Controllers
         [HttpGet("{id}")]
         public ActionResult<Gift> GetGiftByIdHTTPAction(int id)
         {
-            Gift gift = GetGiftById(id);
+            Gift gift = GetGiftProducts(id);
 
             if (gift != null)
             {
@@ -109,23 +114,23 @@ namespace pluk13_web.Controllers
         public ActionResult<Gift> CreateGift([FromBody]JObject giftInfo)
         {
 
-            string title = giftInfo.GetValue("title").ToString();
-            JArray contents = (JArray)giftInfo.SelectToken("contents");
+            string title = giftInfo.GetValue("giftTitle").ToString();
+            JObject contents = (JObject)giftInfo.SelectToken("contents");
             try
             {
                 var conn = dbHelper.dbConnection;
-                string statement = "INSERT INTO gifts(gift_title) VALUES (@gift_title);select last_insert_id();";
+                string statement = "INSERT INTO gifts(gift_title) VALUES (@gift_title); select last_insert_id();";
                 MySqlCommand command = new MySqlCommand(statement, conn);
                 conn.Open();
                 command.Parameters.AddWithValue("@gift_title", title);
                 int giftId = Convert.ToInt32(command.ExecuteScalar());
                 conn.Close();
 
-                statement = "INSERT INTO GiftContent(gift_id, product_id) VALUES ";
+                statement = "INSERT INTO GiftContent(gift_id, product_id, quantity) VALUES ";
                 List<string> Rows = new List<string>();
-                foreach (int productId in contents)
+                foreach (KeyValuePair<String, JToken> product in contents)
                 {
-                    Rows.Add(string.Format("({0},{1})", giftId, productId));
+                    Rows.Add(string.Format("({0},{1}, {2})", giftId, product.Key, product.Value));
                 }
                 statement += String.Join(",", Rows) + ";";
                 Console.WriteLine(statement);
@@ -141,6 +146,53 @@ namespace pluk13_web.Controllers
             {
                 return BadRequest(error);
             }
+        }
+
+        [HttpPatch("{id}/contents")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<Product> UpdateGiftContent(int id, [FromBody]JObject newGiftInfo)
+        {
+
+            Gift gift = GetGiftById(id);
+            if (gift != null)
+            {
+                JObject contents = (JObject)newGiftInfo.SelectToken("contents");
+                try
+                {
+                    var conn = dbHelper.dbConnection;
+                    //string statement = "UPDATE INTO GiftContent(gift_id, product_id, quantity) VALUES ";
+                    string statement = @"UPDATE 
+                                GiftContent
+                            SET 
+                               quantity = @quantity
+                            WHERE 
+                                gift_id = @giftId AND product_id = @product_id;";
+                    List<string> Rows = new List<string>();
+
+
+                    conn.Open();
+                    foreach (KeyValuePair<String, JToken> product in contents)
+                    {
+                        MySqlCommand command = new MySqlCommand(statement, conn);
+                        command.Parameters.AddWithValue("@giftId", id);
+                        command.Parameters.AddWithValue("@product_id", product.Key);
+                        command.Parameters.AddWithValue("@quantity", product.Value);
+
+
+                        command.ExecuteScalar();
+
+                        command.Dispose();
+                    }
+                    conn.Close();
+                    return Ok(GetAllGifts());
+                }
+                catch (MySqlException error)
+                {
+                    return BadRequest(error);
+                }
+            }
+            return NotFound();
         }
 
         [HttpDelete("{id}")]
