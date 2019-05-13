@@ -20,7 +20,7 @@ import { SelectionState } from "@devexpress/dx-react-grid";
 import { Container, Row, Col } from "reactstrap";
 import { getProducts } from "../util/dataFetcher";
 
-const AddProductDialog = props => {
+const AddProductToGiftDialog = props => {
   const productsHeader = [
     { name: "productId", disablePadding: false, title: "Id" },
     { name: "productTitle", disablePadding: false, title: "Titel" }
@@ -225,4 +225,4 @@ const NoDataWrapper = styled.div`
 const ActionBTN = MUIStyled(Button)({
   margin: "5px"
 });
-export default AddProductDialog;
+export default AddProductToGiftDialog;

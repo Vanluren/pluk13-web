@@ -148,43 +148,74 @@ namespace pluk13_web.Controllers
             }
         }
 
-        [HttpPatch("{id}/contents")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<Product> UpdateGiftContent(int id, [FromBody]JObject newGiftInfo)
+        private void UpdateGiftContent(int giftId, JObject contents)
         {
-
-            Gift gift = GetGiftById(id);
-            if (gift != null)
-            {
-                JObject contents = (JObject)newGiftInfo.SelectToken("contents");
-                try
-                {
-                    var conn = dbHelper.dbConnection;
-                    //string statement = "UPDATE INTO GiftContent(gift_id, product_id, quantity) VALUES ";
-                    string statement = @"UPDATE 
+            var conn = dbHelper.dbConnection;
+            string statement = @"UPDATE 
                                 GiftContent
                             SET 
                                quantity = @quantity
                             WHERE 
                                 gift_id = @giftId AND product_id = @product_id;";
-                    List<string> Rows = new List<string>();
+            List<string> Rows = new List<string>();
 
 
-                    conn.Open();
-                    foreach (KeyValuePair<String, JToken> product in contents)
+            conn.Open();
+            foreach (KeyValuePair<String, JToken> product in contents)
+            {
+                MySqlCommand command = new MySqlCommand(statement, conn);
+                command.Parameters.AddWithValue("@giftId", giftId);
+                command.Parameters.AddWithValue("@product_id", product.Key);
+                command.Parameters.AddWithValue("@quantity", product.Value);
+
+
+                command.ExecuteScalar();
+
+                command.Dispose();
+            }
+            conn.Close();
+        }
+
+        public void UpdateGiftTitle(int giftId, string giftTitle)
+        {
+            var conn = dbHelper.dbConnection;
+            string statement = @"UPDATE 
+                                Gifts
+                            SET 
+                               gift_title = @gift_title
+                            WHERE 
+                                gift_id = @gift_id;";
+
+            conn.Open();
+            MySqlCommand command = new MySqlCommand(statement, conn);
+            command.Parameters.AddWithValue("@gift_id", giftId);
+            command.Parameters.AddWithValue("@gift_title", giftTitle);
+            command.ExecuteScalar();
+            command.Dispose();
+            conn.Close();
+        }
+
+        [HttpPatch("{id}/contents")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<Product> PatchGift(int id, [FromBody]JObject newGiftInfo)
+        {
+
+            Gift gift = GetGiftById(id);
+            if (gift != null)
+            {
+                try
+                {
+                    if (newGiftInfo.SelectToken("contents") != null)
                     {
-                        MySqlCommand command = new MySqlCommand(statement, conn);
-                        command.Parameters.AddWithValue("@giftId", id);
-                        command.Parameters.AddWithValue("@product_id", product.Key);
-                        command.Parameters.AddWithValue("@quantity", product.Value);
-
-
-                        command.ExecuteScalar();
-
-                        command.Dispose();
+                        JObject contents = (JObject)newGiftInfo.SelectToken("contents");
+                        UpdateGiftContent(id, contents);
                     }
-                    conn.Close();
+                    if (newGiftInfo.GetValue("giftTitle") != null)
+                    {
+                        string title = newGiftInfo.GetValue("giftTitle").ToString();
+                        UpdateGiftTitle(id, title);
+                    }
                     return Ok(GetAllGifts());
                 }
                 catch (MySqlException error)
