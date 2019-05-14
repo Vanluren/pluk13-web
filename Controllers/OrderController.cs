@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json.Linq;
 using pluk13_web.Helpers;
 using pluk13_web.Models;
@@ -27,6 +28,7 @@ namespace pluk13_web.Controllers
                 Order order = new Order(orderId);
                 order.Products = GetProductsForOrder(orderId);
                 order.Gifts = GetGiftsForOrder(orderId);
+                order.CreatedAt = queryRes.Rows[0]["create_at"].ToString();
                 return order;
             }
             return null;
@@ -43,6 +45,7 @@ namespace pluk13_web.Controllers
             foreach (DataRow productRow in productQuery.Rows)
             {
                 Product product = new ProductController().GetProductById((int)productRow["product_id"]);
+                product.ProductQuantity = (int)productRow["quantity"];
                 products.Add(product);
             }
             return products;
@@ -59,7 +62,8 @@ namespace pluk13_web.Controllers
                                         order_id = {orderId};");
             foreach (DataRow giftRow in giftQuery.Rows)
             {
-                Gift gift = new GiftController().GetGiftById((int)giftRow["gift_id"]);
+                Gift gift = new GiftController().GetGiftProducts((int)giftRow["gift_id"]);
+                gift.GiftQuantity = (int)giftRow["quantity"];
                 gifts.Add(gift);
             }
             return gifts;
@@ -67,7 +71,7 @@ namespace pluk13_web.Controllers
 
         public List<Order> GetAllOrders()
         {
-            var queryRes = dbHelper.SelectQuery("SELECT * FROM" + " " + OrdersTable + ";");
+            var queryRes = dbHelper.SelectQuery($"SELECT * FROM {OrdersTable};");
             if (queryRes.Rows.Count > 0)
             {
                 List<Order> listOfOrders = new List<Order>();
@@ -76,6 +80,7 @@ namespace pluk13_web.Controllers
                     Order order = new Order((int)orderRow["order_id"]);
                     order.Products = GetProductsForOrder((int)orderRow["order_id"]);
                     order.Gifts = GetGiftsForOrder((int)orderRow["order_id"]);
+                    order.CreatedAt = orderRow["create_at"].ToString();
                     listOfOrders.Add(order);
                 }
                 return listOfOrders;
@@ -108,17 +113,67 @@ namespace pluk13_web.Controllers
             return Ok(order);
         }
 
+        private void InsertProductContents(int orderId, JObject products)
+        {
+            var conn = dbHelper.dbConnection;
+            string statement = "INSERT INTO OrderProducts(order_id, product_id, quantity) VALUES ";
+            List<string> Rows = new List<string>();
+            foreach (KeyValuePair<String, JToken> product in products)
+            {
+                Rows.Add(string.Format("({0},{1}, {2})", orderId, product.Key, product.Value));
+            }
+            statement += String.Join(",", Rows) + ";";
+            MySqlCommand command = new MySqlCommand(statement, conn);
+
+            conn.Open();
+            command.ExecuteNonQuery();
+            conn.Close();
+        }
+        private void InsertOrderGifts(int orderId, JObject gifts)
+        {
+            var conn = dbHelper.dbConnection;
+            string statement = "INSERT INTO OrderGifts(order_id, gift_id, quantity) VALUES ";
+            List<string> Rows = new List<string>();
+            foreach (KeyValuePair<String, JToken> gift in gifts)
+            {
+                Rows.Add(string.Format("({0},{1}, {2})", orderId, gift.Key, gift.Value));
+            }
+            statement += String.Join(",", Rows) + ";";
+            MySqlCommand command = new MySqlCommand(statement, conn);
+
+            conn.Open();
+            command.ExecuteNonQuery();
+            conn.Close();
+        }
+
         [HttpPost]
-        public ActionResult<Order> CreateNewOrder([FromBody] JObject value)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<Order> CreateNewOrder([FromBody]JObject orderInfo)
         {
 
-            Order order = value.ToObject<Order>();
-            string orderId = value.GetValue("orderId").ToString();
+            int orderId = (int)orderInfo.GetValue("orderId");
+            JObject products = (JObject)orderInfo.SelectToken("products");
+            JObject gifts = (JObject)orderInfo.SelectToken("gifts");
+            try
+            {
+                var conn = dbHelper.dbConnection;
+                string statement = $"INSERT INTO {OrdersTable}(order_id) VALUES (@order_id);";
+                MySqlCommand command = new MySqlCommand(statement, conn);
+                conn.Open();
+                command.Parameters.AddWithValue("@order_id", orderId);
+                int giftId = Convert.ToInt32(command.ExecuteScalar());
+                conn.Close();
 
-            string statement =
-            "INSERT INTO " + OrdersTable + " (order_id) VALUES (" + orderId + ");";
-            bool res = dbHelper.InsertQuery(statement);
-            return CreatedAtAction(nameof(CreateNewOrder), order);
+                InsertProductContents(orderId, products);
+                InsertOrderGifts(orderId, gifts);
+
+                return Created(nameof(CreateNewOrder), GetOrderById(orderId));
+            }
+            catch (MySqlException error)
+            {
+                return BadRequest(error);
+            }
         }
 
         [HttpDelete("{id}")]

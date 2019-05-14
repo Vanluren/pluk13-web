@@ -119,7 +119,7 @@ class Overview extends Component {
       loading
     } = this.state;
     return (
-      <Container>
+      <Container fluid>
         <TopWrapperRow>
           <Col xs={{ size: 6, offset: 2 }}>
             <NavLink to="/overview/products">

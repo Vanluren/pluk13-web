@@ -8,6 +8,8 @@ namespace pluk13_web.Models
         public int OrderId { get; set; }
         public List<Product> Products { get; set; }
         public List<Gift> Gifts { get; set; }
+
+        public String CreatedAt { get; set; }
         public Order(int id)
         {
             OrderId = id;
