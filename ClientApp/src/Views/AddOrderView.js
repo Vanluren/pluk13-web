@@ -158,7 +158,7 @@ class AddOrderView extends Component {
     });
   };
 
-  saveOrder = () => {
+  saveOrder = print => {
     if (this.state.orderNumber === null) {
       return this.setState({
         hasError: true,
@@ -178,7 +178,7 @@ class AddOrderView extends Component {
       .then(() => {
         this.props.history.push({
           pathname: `/order/${body.orderId}`,
-          state: { print: true }
+          state: { print: print }
         });
       })
       .catch(err => {
@@ -204,26 +204,6 @@ class AddOrderView extends Component {
         <Row>
           <Col xs={5}>
             <Row>
-              <SearchField onChange={this.searchProducts} />
-              <Paper>
-                <ContentHeader>Produkter</ContentHeader>
-                <Grid columns={productColumns} rows={products}>
-                  <SearchState value={productSearchValue} />
-                  <IntegratedFiltering />
-                  <PagingState defaultCurrentPage={0} pageSize={5} />
-                  <SelectionState
-                    selection={selectedProds}
-                    onSelectionChange={this.selectProduct}
-                  />
-                  <IntegratedPaging />
-                  <Table />
-                  <TableHeaderRow />
-                  <PagingPanel />
-                  <TableSelection selectByRowClick highlightRow />
-                </Grid>
-              </Paper>
-            </Row>
-            <RowTopMargin>
               <SearchField onChange={this.searchGifts} />
               <Paper>
                 <ContentHeader>Gaver</ContentHeader>
@@ -234,6 +214,26 @@ class AddOrderView extends Component {
                   <SelectionState
                     selection={selectedGifts}
                     onSelectionChange={this.selectGift}
+                  />
+                  <IntegratedPaging />
+                  <Table />
+                  <TableHeaderRow />
+                  <PagingPanel />
+                  <TableSelection selectByRowClick highlightRow />
+                </Grid>
+              </Paper>
+            </Row>
+            <RowTopMargin>
+              <SearchField onChange={this.searchProducts} />
+              <Paper>
+                <ContentHeader>Produkter</ContentHeader>
+                <Grid columns={productColumns} rows={products}>
+                  <SearchState value={productSearchValue} />
+                  <IntegratedFiltering />
+                  <PagingState defaultCurrentPage={0} pageSize={5} />
+                  <SelectionState
+                    selection={selectedProds}
+                    onSelectionChange={this.selectProduct}
                   />
                   <IntegratedPaging />
                   <Table />
@@ -289,7 +289,14 @@ class AddOrderView extends Component {
                       Anuller
                     </ActionBTN>
                     <ActionBTN
-                      onClick={this.saveOrder}
+                      onClick={() => this.saveOrder(false)}
+                      color="primary"
+                      variant="contained"
+                    >
+                      Gem
+                    </ActionBTN>
+                    <ActionBTN
+                      onClick={() => this.saveOrder(true)}
                       color="primary"
                       variant="contained"
                     >
