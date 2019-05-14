@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import styled from "styled-components";
-import { Paper } from "@material-ui/core";
+import { Paper, Button } from "@material-ui/core";
 import {
   Grid,
   Table,
@@ -11,8 +11,6 @@ import {
   IntegratedFiltering,
   SelectionState
 } from "@devexpress/dx-react-grid";
-import { Link } from "react-router-dom";
-
 import { Container, Row, Col } from "reactstrap";
 import { getOrders } from "../util/dataFetcher";
 import SearchField from "../components/SearchField";
@@ -64,7 +62,17 @@ class OrderHistory extends Component {
     return (
       <Container fluid>
         <TopWrapperRow>
-          <Col xs="4" className="float-right">
+          <Col xs={{ size: 4 }}>
+            <Button
+              variant="contained"
+              size="large"
+              color="primary"
+              onClick={() => this.props.history.push("/")}
+            >
+              Opret ny ordre
+            </Button>
+          </Col>
+          <Col xs={{ size: 4, offset: 4 }} className="float-right">
             <SearchField onChange={this.searchOnChange} />
           </Col>
         </TopWrapperRow>

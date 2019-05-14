@@ -8,8 +8,6 @@ import {
   Table,
   TableHeaderRow,
   TableSelection,
-  Toolbar,
-  SearchPanel,
   PagingPanel
 } from "@devexpress/dx-react-grid-material-ui";
 import {

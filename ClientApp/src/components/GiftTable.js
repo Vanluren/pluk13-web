@@ -7,8 +7,7 @@ import {
   Table,
   TableHeaderRow,
   TableTreeColumn,
-  TableEditColumn,
-  TableEditRow
+  TableEditColumn
 } from "@devexpress/dx-react-grid-material-ui";
 import {
   EditingState,
@@ -22,7 +21,7 @@ import AddProductToGiftDialog from "../components/AddProductToGiftDialog";
 
 const GiftTable = props => {
   const [dialogActive, toggleDialog] = useState(false);
-  const [editingRowIds, changeEditingRowIds] = useState([]);
+  const [editingRowIds] = useState([]);
   const getChildRows = (row, rootRows) => (row ? row.contents : rootRows);
 
   const columns = [
@@ -53,41 +52,46 @@ const GiftTable = props => {
     { name: "location", editingEnabled: false }
   ];
 
-  const removeProduct = giftId => {
-    console.log(giftId);
-    // const body = JSON.stringify({
-    //   contents: {
-    //     [productId]: 0
-    //   }
-    // });
-    // fetch(`api/gifts/${giftId}/contents`, {
-    //   method: "PATCH",
-    //   headers: {
-    //     headers: { "Content-Type": "application/json" }
-    //   },
-    //   body
-    // })
-    //   .then(res => res.json())
-    //   .then(res => props.setGifts(res));
-  };
-  const updateGiftInfo = changed => {
-    const giftIndex = Object.keys(changed)[0];
-    const giftId = props.dataRows[giftIndex].giftId;
-    console.log(editingRowIds);
-    console.log(giftId);
-    // const body = JSON.stringify({
-    //   giftTitle: title
-    // });
-    // fetch(`api/gifts/${giftId}/contents`, {
-    //   method: "PATCH",
-    //   headers: {
-    //     headers: { "Content-Type": "application/json" }
-    //   },
-    //   body
-    // })
-    //   .then(res => res.json())
-    //   .then(res => props.setGifts(res));
-  };
+  // const removeProduct = giftId => {
+  //   console.log(giftId);
+  //   // const body = JSON.stringify({
+  //   //   contents: {
+  //   //     [productId]: 0
+  //   //   }
+  //   // });
+  //   // fetch(`api/gifts/${giftId}/contents`, {
+  //   //   method: "PATCH",
+  //   //   headers: {
+  //   //     headers: { "Content-Type": "application/json" }
+  //   //   },
+  //   //   body
+  //   // })
+  //   //   .then(res => res.json())
+  //   //   .then(res => props.setGifts(res));
+  // };
+  // const updateGiftInfo = changed => {
+  //   const giftIndex = Object.keys(changed)[0];
+  //   const giftId = props.dataRows[giftIndex].giftId;
+  //   console.log(editingRowIds);
+  //   console.log(giftId);
+  //   // const body = JSON.stringify({
+  //   //   giftTitle: title
+  //   // });
+  //   // fetch(`api/gifts/${giftId}/contents`, {
+  //   //   method: "PATCH",
+  //   //   headers: {
+  //   //     headers: { "Content-Type": "application/json" }
+  //   //   },
+  //   //   body
+  //   // })
+  //   //   .then(res => res.json())
+  //   //   .then(res => props.setGifts(res));
+  // };
+
+  // const GiftRow = row => {
+  //   console.log(row);
+  //   return <Table.Row />;
+  // };
 
   const commitChanges = ({ changed, deleted }) => {
     if (changed) {
@@ -126,7 +130,9 @@ const GiftTable = props => {
           {props.editable && (
             <EditingState
               editingRowIds={editingRowIds}
-              onEditingRowIdsChange={(params, newParams) => console.log("edit!", params)}
+              onEditingRowIdsChange={(params, newParams) =>
+                console.log("edit!", params)
+              }
               onCommitChanges={commitChanges}
               columnExtensions={disabledInEditing}
             />
@@ -135,13 +141,18 @@ const GiftTable = props => {
           {props.loading ? (
             <Table
               bodyComponent={() => (
-                <LoaderWrapper>
-                  <StyledLoader />
-                </LoaderWrapper>
+                <tbody>
+                  <LoaderWrapper>
+                    <td style={{ left: "45%", position: "relative" }}>
+                      <StyledLoader />
+                    </td>
+                  </LoaderWrapper>
+                </tbody>
               )}
             />
           ) : (
-            <Table />
+            <Table //rowComponent={GiftRow}
+            />
           )}
           <TableHeaderRow />
           {props.editable && (

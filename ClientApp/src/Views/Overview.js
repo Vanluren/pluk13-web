@@ -119,16 +119,32 @@ class Overview extends Component {
       loading
     } = this.state;
     return (
-      <Container fluid>
+      <Container>
         <TopWrapperRow>
           <Col xs={{ size: 6, offset: 2 }}>
             <NavLink to="/overview/products">
-              <ViewChangerBTN variant="contained" size="large">
+              <ViewChangerBTN
+                variant="contained"
+                size="large"
+                color={
+                  window.location.pathname === "/overview/products"
+                    ? "primary"
+                    : "default"
+                }
+              >
                 Produkter
               </ViewChangerBTN>
             </NavLink>
             <NavLink to="/overview/gifts">
-              <ViewChangerBTN variant="contained" size="large">
+              <ViewChangerBTN
+                variant="contained"
+                size="large"
+                color={
+                  window.location.pathname === "/overview/gifts"
+                    ? "primary"
+                    : "default"
+                }
+              >
                 Gaver
               </ViewChangerBTN>
             </NavLink>

@@ -14,9 +14,18 @@ import {
   Grid,
   Table,
   TableHeaderRow,
-  TableSelection
+  TableSelection,
+  Toolbar,
+  SearchPanel,
+  PagingPanel
 } from "@devexpress/dx-react-grid-material-ui";
-import { SelectionState } from "@devexpress/dx-react-grid";
+import {
+  SelectionState,
+  SearchState,
+  PagingState,
+  IntegratedPaging,
+  IntegratedFiltering
+} from "@devexpress/dx-react-grid";
 import { Container, Row, Col } from "reactstrap";
 import { getProducts } from "../util/dataFetcher";
 
@@ -119,11 +128,10 @@ const AddProductToGiftDialog = props => {
           <Row>
             <Col xs="6">
               <Paper>
-                <Grid
-                  columns={productsHeader}
-                  rows={products}
-                  //getRowId={row => row.productId}
-                >
+                <Grid columns={productsHeader} rows={products}>
+                  <SearchState/>
+                  <IntegratedFiltering />
+                  <PagingState defaultCurrentPage={0} pageSize={5} />
                   <SelectionState
                     selection={selection}
                     onSelectionChange={selected => {
@@ -136,8 +144,12 @@ const AddProductToGiftDialog = props => {
                       );
                     }}
                   />
+                  <IntegratedPaging />
                   <Table />
                   <TableHeaderRow />
+                  <Toolbar />
+                  <SearchPanel />
+                  <PagingPanel />
                   <TableSelection selectByRowClick highlightRow />
                 </Grid>
               </Paper>
