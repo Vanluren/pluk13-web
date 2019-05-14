@@ -60,8 +60,11 @@ class Overview extends Component {
   };
   editProductOnClickHandler = params => {
     const id = Object.keys(params)[0];
+    const product = this.state.products.find(
+      p => p.productId === parseInt(id, 10)
+    );
     const body = {
-      ...this.state.products[id],
+      ...product,
       ...Object.values(params)[0]
     };
 

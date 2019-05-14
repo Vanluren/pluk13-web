@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Paper } from "@material-ui/core";
-import { Getter, Action } from "@devexpress/dx-react-core";
+import { Getter } from "@devexpress/dx-react-core";
 import {
   Grid,
   Table,
@@ -81,22 +81,6 @@ const ProductTable = props => {
         )}
         {props.showSelect && <TableSelection selectByRowClick highlightRow />}
         <Getter
-          name="tableColumns"
-          computed={({ tableColumns }) => {
-            const result = [
-              ...tableColumns.filter(
-                c => c.type !== TableEditColumn.COLUMN_TYPE
-              ),
-              {
-                key: "editCommand",
-                type: TableEditColumn.COLUMN_TYPE,
-                width: 140
-              }
-            ];
-            return result;
-          }}
-        />
-        <Action
           name="tableColumns"
           computed={({ tableColumns }) => {
             const result = [
