@@ -72,7 +72,12 @@ const ProductTable = props => {
         <TableHeaderRow />
         {props.editable && <TableEditRow />}
         {props.editable && (
-          <TableEditColumn showAddCommand showEditCommand showDeleteCommand />
+          <TableEditColumn
+            showAddCommand
+            showEditCommand
+            showDeleteCommand
+            messages={{ addCommand: "Nyt produkt", editCommand: "Ret", deleteCommand: "slet" }}
+          />
         )}
         {props.showSelect && <TableSelection selectByRowClick highlightRow />}
         <Getter
