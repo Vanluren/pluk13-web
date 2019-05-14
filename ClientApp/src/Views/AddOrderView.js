@@ -374,7 +374,7 @@ const Footer = styled.div`
   flex-direction: row;
   justify-content: flex-end;
   position: relative;
-  bottom: -15px;
+  bottom: -5px;
 `;
 const ActionBTN = MUIStyled(Button)({
   margin: "5px"
