@@ -10,7 +10,7 @@ export default function Routing() {
     <Layout>
       <Route exact path="/" component={AddOrderView} />
       <Route path="/overview" component={Overview} />
-      <Route path="/order/:id" component={Order} />
+      <Route path="/plukliste/:id" component={Order} />
     </Layout>
   );
 }

@@ -178,7 +178,7 @@ class AddOrderView extends Component {
     })
       .then(() => {
         this.props.history.push({
-          pathname: `/order/${body.orderId}`,
+          pathname: `/plukliste/${body.orderId}`,
           state: { print: print }
         });
       })
@@ -334,7 +334,7 @@ class AddOrderView extends Component {
                     <ActionBTN
                       onClick={() => this.saveOrder(false)}
                       color="primary"
-                      variant="contained"
+                      variant="outlined"
                     >
                       Gem
                     </ActionBTN>

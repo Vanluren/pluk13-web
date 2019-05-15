@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Paper } from "@material-ui/core";
-import { Getter, Action } from "@devexpress/dx-react-core";
+import { Getter } from "@devexpress/dx-react-core";
 import {
   Grid,
   Table,

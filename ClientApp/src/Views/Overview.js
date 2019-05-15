@@ -9,7 +9,7 @@ import SearchField from "../components/SearchField";
 import ProductTable from "../components/ProductTable";
 import GiftTable from "../components/GiftTable";
 import OrdersTable from "../components/OrdersTable";
-import { getGifts, getProducts } from "../util/dataFetcher";
+import { getGifts, getProducts, getOrders } from "../util/dataFetcher";
 
 class Overview extends Component {
   constructor(props) {
@@ -17,6 +17,7 @@ class Overview extends Component {
     this.state = {
       loading: false,
       searchInputValue: "",
+      orders: [],
       gifts: [],
       products: [],
       productsHeader: [
@@ -41,13 +42,22 @@ class Overview extends Component {
         }
       });
     }
-
     if (this.state.products.length <= 0) {
       getProducts().then(res => {
         if (res) {
           this.setState({
             loading: false,
             products: res
+          });
+        }
+      });
+    }
+    if (this.state.orders.length <= 0) {
+      getOrders().then(res => {
+        if (res) {
+          this.setState({
+            loading: false,
+            orders: res
           });
         }
       });
@@ -98,12 +108,11 @@ class Overview extends Component {
     });
   };
 
-  handleSelect = selected => this.setState({ selected });
-  isSelected = id => this.state.selected.indexOf(id) !== -1;
   render() {
     const {
       searchInputValue,
       products,
+      orders,
       productsHeader,
       gifts,
       giftsHeader,
@@ -177,7 +186,6 @@ class Overview extends Component {
                     }
                   ]}
                   getRowId={row => row.productId}
-                  editable
                   active={match}
                   setProducts={this.setProducts}
                 />
@@ -204,7 +212,14 @@ class Overview extends Component {
             <Route
               exact
               path="/overview/plukliste"
-              component={({ match }) => <OrdersTable active={match} />}
+              component={({ match }) => (
+                <OrdersTable
+                  active={match}
+                  orders={orders}
+                  searchInputValue={searchInputValue}
+                  loading={orders.length <= 0}
+                />
+              )}
             />
           </Switch>
         </Row>

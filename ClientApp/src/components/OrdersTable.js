@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 import { withRouter } from "react-router";
-import { Paper, Button } from "@material-ui/core";
+import { Paper, Button, CircularProgress } from "@material-ui/core";
 import {
   Grid,
   Table,
@@ -13,7 +13,6 @@ import {
   SelectionState
 } from "@devexpress/dx-react-grid";
 import { Container, Row, Col } from "reactstrap";
-import { getOrders } from "../util/dataFetcher";
 
 class OrdersTable extends Component {
   constructor(props) {
@@ -22,24 +21,9 @@ class OrdersTable extends Component {
       columns: [
         { name: "orderId", disablePadding: false, title: "Id" },
         { name: "createdAt", disablePadding: false, title: "Dato" }
-      ],
-      orders: [],
-      searchInputValue: ""
+      ]
     };
   }
-  componentDidMount() {
-    getOrders().then(res => {
-      if (res) {
-        this.setState({
-          loading: false,
-          orders: res
-        });
-      }
-    });
-  }
-  searchOnChange = event => {
-    this.setState({ searchInputValue: event.target.value });
-  };
 
   OrderRow = ({ row, ...restProps }) => {
     return (
@@ -47,7 +31,7 @@ class OrdersTable extends Component {
         {...restProps}
         onClick={() =>
           this.props.history.push({
-            pathname: `/order/${row.orderId}`,
+            pathname: `/plukliste/${row.orderId}`,
             state: { currentOrder: row.orderId }
           })
         }
@@ -58,7 +42,8 @@ class OrdersTable extends Component {
     );
   };
   render() {
-    const { orders, columns, searchInputValue } = this.state;
+    const { columns } = this.state;
+    const { orders, searchInputValue, loading } = this.props;
     return (
       <Container fluid>
         <TopWrapperRow>
@@ -78,15 +63,35 @@ class OrdersTable extends Component {
           </Col>
         </TopWrapperRow>
         <Row>
-          <Paper>
-            <Grid columns={columns} rows={orders} getRowId={row => row.orderId}>
-              <SearchState value={searchInputValue} />
-              <SelectionState />
-              <IntegratedFiltering />
-              <Table rowComponent={this.OrderRow} />
-              <TableHeaderRow />
-            </Grid>
-          </Paper>
+          <Col>
+            <Paper>
+              <Grid
+                columns={columns}
+                rows={orders}
+                getRowId={row => row.orderId}
+              >
+                <SearchState value={searchInputValue} />
+                <SelectionState />
+                <IntegratedFiltering />
+                {loading ? (
+                  <Table
+                    bodyComponent={() => (
+                      <tbody>
+                        <LoaderWrapper>
+                          <td style={{ left: "45%", position: "relative" }}>
+                            <StyledLoader />
+                          </td>
+                        </LoaderWrapper>
+                      </tbody>
+                    )}
+                  />
+                ) : (
+                  <Table rowComponent={this.OrderRow} />
+                )}
+                <TableHeaderRow />
+              </Grid>
+            </Paper>
+          </Col>
         </Row>
       </Container>
     );
@@ -96,12 +101,12 @@ class OrdersTable extends Component {
 const TopWrapperRow = styled(Row)`
   margin-bottom: 25px;
 `;
-// const LoaderWrapper = styled.tr`
-//   left: 50%;
-//   position: relative;
-// `;
-// const StyledLoader = styled(CircularProgress)`
-//   margin: 25px;
-// `;
+const LoaderWrapper = styled.tr`
+  left: 50%;
+  position: relative;
+`;
+const StyledLoader = styled(CircularProgress)`
+  margin: 25px;
+`;
 
 export default withRouter(OrdersTable);
