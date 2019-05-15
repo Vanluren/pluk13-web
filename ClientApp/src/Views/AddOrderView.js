@@ -8,7 +8,9 @@ import {
   Table,
   TableHeaderRow,
   TableSelection,
-  PagingPanel
+  PagingPanel,
+  Toolbar,
+  SearchPanel
 } from "@devexpress/dx-react-grid-material-ui";
 import {
   SelectionState,
@@ -202,49 +204,62 @@ class AddOrderView extends Component {
     return (
       <Container fluid>
         <Row>
-          <Col xs={5}>
+          <Col xs={6}>
             <Row>
-              <SearchField onChange={this.searchGifts} />
-              <Paper>
-                <ContentHeader>Gaver</ContentHeader>
-                <Grid columns={giftColumns} rows={gifts}>
-                  <PagingState defaultCurrentPage={0} pageSize={5} />
-                  <SearchState value={giftSearchValue} />
-                  <IntegratedFiltering />
-                  <SelectionState
-                    selection={selectedGifts}
-                    onSelectionChange={this.selectGift}
-                  />
-                  <IntegratedPaging />
-                  <Table />
-                  <TableHeaderRow />
-                  <PagingPanel />
-                  <TableSelection selectByRowClick highlightRow />
-                </Grid>
-              </Paper>
+              <Col>
+                <Paper>
+                  <ContentHeader>Gaver</ContentHeader>
+                  <Grid columns={giftColumns} rows={gifts}>
+                    <PagingState defaultCurrentPage={0} pageSize={5} />
+                    <SearchState
+                      value={giftSearchValue}
+                      onValueChange={this.searchGifts}
+                    />
+                    <IntegratedFiltering />
+                    <SelectionState
+                      selection={selectedGifts}
+                      onSelectionChange={this.selectGift}
+                    />
+                    <IntegratedPaging />
+                    <Table />
+                    <TableHeaderRow />
+                    <Toolbar />
+                    <SearchPanel />
+                    <PagingPanel />
+                    <TableSelection selectByRowClick highlightRow />
+                  </Grid>
+                </Paper>
+              </Col>
             </Row>
             <RowTopMargin>
-              <SearchField onChange={this.searchProducts} />
-              <Paper>
-                <ContentHeader>Produkter</ContentHeader>
-                <Grid columns={productColumns} rows={products}>
-                  <SearchState value={productSearchValue} />
-                  <IntegratedFiltering />
-                  <PagingState defaultCurrentPage={0} pageSize={5} />
-                  <SelectionState
-                    selection={selectedProds}
-                    onSelectionChange={this.selectProduct}
-                  />
-                  <IntegratedPaging />
-                  <Table />
-                  <TableHeaderRow />
-                  <PagingPanel />
-                  <TableSelection selectByRowClick highlightRow />
-                </Grid>
-              </Paper>
+              <Col>
+                <Paper>
+                  <ContentHeader>Produkter</ContentHeader>
+                  <Grid columns={productColumns} rows={products}>
+                    <SearchState value={productSearchValue} />
+                    <SearchState
+                      value={productSearchValue}
+                      onValueChange={this.searchProducts}
+                    />
+                    <IntegratedFiltering />
+                    <PagingState defaultCurrentPage={0} pageSize={5} />
+                    <SelectionState
+                      selection={selectedProds}
+                      onSelectionChange={this.selectProduct}
+                    />
+                    <IntegratedPaging />
+                    <Table />
+                    <TableHeaderRow />
+                    <Toolbar />
+                    <SearchPanel />
+                    <PagingPanel />
+                    <TableSelection selectByRowClick highlightRow />
+                  </Grid>
+                </Paper>
+              </Col>
             </RowTopMargin>
           </Col>
-          <Col xs={{ size: 6, offset: 1 }}>
+          <Col xs={{ size: 6 }}>
             <ContentsWrapper>
               <ContentHeader>Ny plukliste:</ContentHeader>
               <Row>
@@ -254,26 +269,27 @@ class AddOrderView extends Component {
                     id="outlined-required"
                     label="Ordrenr.:"
                     margin="normal"
-                    fullWidth
-                    variant="filled"
+                    variant="outlined"
                     type="number"
+                    fullWidth
                     onChange={event =>
                       this.setState({ orderNumber: event.target.value })
                     }
+                    style={{ padding: "0px 8px" }}
                   />
                 </Col>
               </Row>
               <Row>
                 <GiftCol>
                   <ContentHeader>Gaver:</ContentHeader>
-                  <Divider />
+                  <Divider variant="middle" />
                   {this.renderGifts()}
                 </GiftCol>
               </Row>
               <Row>
                 <ProdCol>
                   <ContentHeader>Produkter:</ContentHeader>
-                  <Divider />
+                  <Divider variant="middle" />
                   {this.renderProducts()}
                 </ProdCol>
               </Row>
@@ -374,7 +390,7 @@ const Footer = styled.div`
   flex-direction: row;
   justify-content: flex-end;
   position: relative;
-  bottom: -5px;
+  bottom: -35px;
 `;
 const ActionBTN = MUIStyled(Button)({
   margin: "5px"
