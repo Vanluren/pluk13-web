@@ -151,29 +151,30 @@ namespace pluk13_web.Controllers
         private void UpdateGiftContent(int giftId, JObject contents)
         {
             var conn = dbHelper.dbConnection;
-            string statement = @"UPDATE 
-                                GiftContent
-                            SET 
-                               quantity = @quantity
-                            WHERE 
-                                gift_id = @giftId AND product_id = @product_id;";
-            List<string> Rows = new List<string>();
-
-
-            conn.Open();
+            MySqlCommand command;
             foreach (KeyValuePair<String, JToken> product in contents)
             {
-                MySqlCommand command = new MySqlCommand(statement, conn);
-                command.Parameters.AddWithValue("@giftId", giftId);
-                command.Parameters.AddWithValue("@product_id", product.Key);
-                command.Parameters.AddWithValue("@quantity", product.Value);
-
-
-                command.ExecuteScalar();
-
-                command.Dispose();
+                var query = dbHelper.SelectQuery($"SELECT * from Projekt.GiftContent where gift_id = {giftId} AND product_id={product.Key};");
+                if (query.Rows.Count > 0)
+                {
+                    string update = $"UPDATE GiftContent SET quantity=@quantity where gift_id={giftId} AND product_id=@product";
+                    command = new MySqlCommand(update, conn);
+                    conn.Open();
+                    command.Parameters.AddWithValue("@product", product.Key);
+                    command.Parameters.AddWithValue("@quantity", product.Value);
+                    command.ExecuteNonQuery();
+                    command.Parameters.Clear();
+                }
+                else
+                {
+                    string stmt = $"INSERT INTO GiftContent(gift_id, product_id, quantity) VALUES " +
+                    string.Format("({0},{1}, {2})", giftId, product.Key, product.Value);
+                    command = new MySqlCommand(stmt, conn);
+                    conn.Open();
+                    command.ExecuteNonQuery();
+                }
+                conn.Close();
             }
-            conn.Close();
         }
 
         public void UpdateGiftTitle(int giftId, string giftTitle)

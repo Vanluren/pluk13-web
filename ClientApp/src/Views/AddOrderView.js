@@ -246,7 +246,7 @@ class AddOrderView extends Component {
           </Col>
           <Col xs={{ size: 6, offset: 1 }}>
             <ContentsWrapper>
-              <ContentHeader>Ny Ordre:</ContentHeader>
+              <ContentHeader>Ny plukliste:</ContentHeader>
               <Row>
                 <Col>
                   <TextField
@@ -300,7 +300,7 @@ class AddOrderView extends Component {
                       color="primary"
                       variant="contained"
                     >
-                      Gem og print Ordre
+                      Gem og print plukliste
                     </ActionBTN>
                   </Footer>
                 </Col>

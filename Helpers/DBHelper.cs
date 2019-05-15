@@ -17,7 +17,7 @@ namespace pluk13_web.Helpers
 
         public bool OpenDbConnection()
         {
-            try
+            try 
             {
                 dbConnection.Open();
                 Console.WriteLine("MySQL version : {0}", dbConnection.ServerVersion);

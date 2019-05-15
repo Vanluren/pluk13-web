@@ -30,13 +30,10 @@ export class NavMenu extends Component {
             <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
               <ul className="navbar-nav flex-grow">
                 <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/">Plukliste</NavLink>
+                  <NavLink tag={Link} className="text-dark" to="/">Opret Plukliste</NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink tag={Link} className="text-dark" to="/overview/products">Oversigt</NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/history">Historik</NavLink>
                 </NavItem>
               </ul>
             </Collapse>
@@ -55,4 +52,7 @@ const NavBranding = styled(NavbarBrand)`
   white-space: normal;
   text-align: center;
   word-break: break-all;
+`;
+const StyledNavItem = styled(NavItem)`
+  
 `;

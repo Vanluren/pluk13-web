@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import styled from "styled-components";
+import { withRouter } from "react-router";
 import { Paper, Button } from "@material-ui/core";
 import {
   Grid,
@@ -13,9 +14,8 @@ import {
 } from "@devexpress/dx-react-grid";
 import { Container, Row, Col } from "reactstrap";
 import { getOrders } from "../util/dataFetcher";
-import SearchField from "../components/SearchField";
 
-class OrderHistory extends Component {
+class OrdersTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -67,13 +67,14 @@ class OrderHistory extends Component {
               variant="contained"
               size="large"
               color="primary"
-              onClick={() => this.props.history.push("/")}
+              onClick={() => {
+                this.props.history.push({
+                  pathname: "/"
+                });
+              }}
             >
-              Opret ny ordre
+              Opret ny plukliste
             </Button>
-          </Col>
-          <Col xs={{ size: 4, offset: 4 }} className="float-right">
-            <SearchField onChange={this.searchOnChange} />
           </Col>
         </TopWrapperRow>
         <Row>
@@ -95,5 +96,12 @@ class OrderHistory extends Component {
 const TopWrapperRow = styled(Row)`
   margin-bottom: 25px;
 `;
+// const LoaderWrapper = styled.tr`
+//   left: 50%;
+//   position: relative;
+// `;
+// const StyledLoader = styled(CircularProgress)`
+//   margin: 25px;
+// `;
 
-export default OrderHistory;
+export default withRouter(OrdersTable);

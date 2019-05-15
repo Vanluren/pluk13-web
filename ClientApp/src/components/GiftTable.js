@@ -7,7 +7,8 @@ import {
   Table,
   TableHeaderRow,
   TableTreeColumn,
-  TableEditColumn
+  TableEditColumn,
+  TableEditRow
 } from "@devexpress/dx-react-grid-material-ui";
 import {
   EditingState,
@@ -17,13 +18,17 @@ import {
   IntegratedFiltering
 } from "@devexpress/dx-react-grid";
 import { CircularProgress, Button } from "@material-ui/core";
+import { Container, Row, Col } from "reactstrap";
 import AddProductToGiftDialog from "../components/AddProductToGiftDialog";
+import EditGiftDialog from "../components/EditGiftDialog";
 
 const GiftTable = props => {
-  const [dialogActive, toggleDialog] = useState(false);
-  const [editingRowIds] = useState([]);
-  const getChildRows = (row, rootRows) => (row ? row.contents : rootRows);
-
+  const [addDialogActive, toggleAddDialog] = useState(false);
+  const [editDialogActive, toggleEditDialog] = useState(false);
+  const [giftToEdit, editGift] = useState(null);
+  const getChildRows = (row, rootRows) => {
+    return row ? row.contents : rootRows;
+  };
   const columns = [
     { name: "giftId", disablePadding: false, title: "Gave Id" },
     { name: "giftTitle", disablePadding: false, title: "Gave Navn" },
@@ -31,112 +36,73 @@ const GiftTable = props => {
     { name: "productTitle", disablePadding: false, title: "Titel" },
     { name: "size", disablePadding: false, title: "Størrelse" },
     { name: "brand", disablePadding: false, title: "Mærke" },
-    { name: "otherInfo", disablePadding: false, title: "Info" },
-    { name: "location", disablePadding: false, title: "Placering" },
     { name: "productQuantity", disablePadding: false, title: "Antal" }
   ];
-  const disabledInEditing = [
-    {
-      columnName: "giftId",
-      editingEnabled: false
-    },
-    {
-      columnName: "giftTitle",
-      editingEnabled: true
-    },
-    { name: "productId", editingEnabled: false },
-    { name: "productTitle", editingEnabled: false },
-    { name: "size", editingEnabled: false },
-    { name: "brand", editingEnabled: false },
-    { name: "otherInfo", editingEnabled: false },
-    { name: "location", editingEnabled: false }
+  const tableColumnExtensions = [
+    { columnName: "giftId", width: 135 },
+    { columnName: "giftTitle", width: 210, wordWrapEnabled: true },
+    { columnName: "productId", width: 100 },
+    { columnName: "productTitle", width: 200, wordWrapEnabled: true },
+    { columnName: "size", width: 100 },
+    { columnName: "brand", width: 120, wordWrapEnabled: true },
+    { columnName: "productQuantity", width: 50 }
   ];
 
-  // const removeProduct = giftId => {
-  //   console.log(giftId);
-  //   // const body = JSON.stringify({
-  //   //   contents: {
-  //   //     [productId]: 0
-  //   //   }
-  //   // });
-  //   // fetch(`api/gifts/${giftId}/contents`, {
-  //   //   method: "PATCH",
-  //   //   headers: {
-  //   //     headers: { "Content-Type": "application/json" }
-  //   //   },
-  //   //   body
-  //   // })
-  //   //   .then(res => res.json())
-  //   //   .then(res => props.setGifts(res));
-  // };
-  // const updateGiftInfo = changed => {
-  //   const giftIndex = Object.keys(changed)[0];
-  //   const giftId = props.dataRows[giftIndex].giftId;
-  //   console.log(editingRowIds);
-  //   console.log(giftId);
-  //   // const body = JSON.stringify({
-  //   //   giftTitle: title
-  //   // });
-  //   // fetch(`api/gifts/${giftId}/contents`, {
-  //   //   method: "PATCH",
-  //   //   headers: {
-  //   //     headers: { "Content-Type": "application/json" }
-  //   //   },
-  //   //   body
-  //   // })
-  //   //   .then(res => res.json())
-  //   //   .then(res => props.setGifts(res));
-  // };
-
-  // const GiftRow = row => {
-  //   console.log(row);
-  //   return <Table.Row />;
-  // };
-
-  const commitChanges = ({ changed, deleted }) => {
-    if (changed) {
-      console.log(changed);
-      const index = Object.keys(changed)[0];
-      const giftId = props.dataRows[index].giftId;
-      const productId = props.dataRows[index].productId;
-      if (giftId !== undefined) {
-        console.log("gift", giftId);
-      } else {
-        console.log("product", productId);
-      }
-      //const productId = props.dataRows[index].productId;
-    }
-    if (deleted) {
-      console.log(deleted);
-    }
+  const deleteGift = giftId => {
+    fetch(`api/gifts/${giftId}`, {
+      method: "DELETE"
+    })
+      .then(res => res.json())
+      .then(res => props.setGifts(res));
   };
+
+  const editCell = ({ children, row, ...restProps }) => {
+    if (row.giftId) {
+      return (
+        <TableEditColumn.Cell row={row} {...restProps}>
+          <Button
+            color="primary"
+            onClick={() => {
+              editGift(row);
+              toggleEditDialog(!editDialogActive);
+            }}
+          >
+            Ret
+          </Button>
+          <Button
+            color="primary"
+            onClick={() => {
+              deleteGift(row.giftId);
+            }}
+          >
+            Slet
+          </Button>
+        </TableEditColumn.Cell>
+      );
+    }
+    return <TableEditColumn.Cell row={row} {...restProps} />;
+  };
+
   return (
-    <React.Fragment>
-      <BTNWrapper>
-        <Button
-          variant="contained"
-          size="large"
-          color="primary"
-          onClick={() => toggleDialog(!dialogActive)}
-        >
-          Opret gave
-        </Button>
-      </BTNWrapper>
+    <Container>
+      <TopWrapperRow>
+        <Col xs={{ size: 4 }}>
+          <Button
+            variant="contained"
+            size="large"
+            color="primary"
+            onClick={() => toggleAddDialog(!addDialogActive)}
+          >
+            Opret gave
+          </Button>
+        </Col>
+      </TopWrapperRow>
       <Paper style={{ position: "relative" }}>
         <Grid columns={columns} rows={props.dataRows}>
+          <EditingState onCommitChanges={() => {}} />
           <SearchState value={props.searchInputValue} />
           <IntegratedFiltering />
           <TreeDataState />
-          {props.editable && (
-            <EditingState
-              editingRowIds={editingRowIds}
-              onEditingRowIdsChange={(params, newParams) =>
-                console.log("edit!", params)
-              }
-              onCommitChanges={commitChanges}
-              columnExtensions={disabledInEditing}
-            />
-          )}
           <CustomTreeData getChildRows={getChildRows} />
           {props.loading ? (
             <Table
@@ -151,14 +117,12 @@ const GiftTable = props => {
               )}
             />
           ) : (
-            <Table //rowComponent={GiftRow}
-            />
+            <Table columnExtensions={tableColumnExtensions} />
           )}
           <TableHeaderRow />
-          {props.editable && (
-            <TableEditColumn showEditCommand showDeleteCommand />
-          )}
           <TableTreeColumn for="giftId" />
+          <TableEditRow />
+          <TableEditColumn cellComponent={editCell} />
           <Getter
             name="tableColumns"
             computed={({ tableColumns }) => {
@@ -169,7 +133,7 @@ const GiftTable = props => {
                 {
                   key: "editCommand",
                   type: TableEditColumn.COLUMN_TYPE,
-                  width: 140
+                  width: 70
                 }
               ];
               return result;
@@ -178,11 +142,26 @@ const GiftTable = props => {
         </Grid>
       </Paper>
       <AddProductToGiftDialog
-        dialogActive={dialogActive}
-        handleToggle={() => toggleDialog(!dialogActive)}
+        dialogActive={addDialogActive}
+        handleToggle={() => {
+          editGift(null);
+          toggleAddDialog(!addDialogActive);
+        }}
         setGifts={props.setGifts}
+        products={props.products}
+        giftToEdit={giftToEdit}
       />
-    </React.Fragment>
+      <EditGiftDialog
+        dialogActive={editDialogActive}
+        handleToggle={() => {
+          editGift(null);
+          toggleEditDialog(!editDialogActive);
+        }}
+        setGifts={props.setGifts}
+        products={props.products}
+        giftToEdit={giftToEdit}
+      />
+    </Container>
   );
 };
 
@@ -193,8 +172,7 @@ const LoaderWrapper = styled.tr`
 const StyledLoader = styled(CircularProgress)`
   margin: 25px;
 `;
-const BTNWrapper = styled.div`
-  margin: 20px 0px;
+const TopWrapperRow = styled(Row)`
+  margin-bottom: 25px;
 `;
-
 export default GiftTable;

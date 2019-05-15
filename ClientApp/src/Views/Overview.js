@@ -8,6 +8,7 @@ import { Button } from "@material-ui/core";
 import SearchField from "../components/SearchField";
 import ProductTable from "../components/ProductTable";
 import GiftTable from "../components/GiftTable";
+import OrdersTable from "../components/OrdersTable";
 import { getGifts, getProducts } from "../util/dataFetcher";
 
 class Overview extends Component {
@@ -30,22 +31,27 @@ class Overview extends Component {
   }
 
   componentDidMount() {
-    getGifts().then(res => {
-      if (res) {
-        this.setState({
-          loading: false,
-          gifts: res
-        });
-      }
-    });
-    getProducts().then(res => {
-      if (res) {
-        this.setState({
-          loading: false,
-          products: res
-        });
-      }
-    });
+    if (this.state.gifts.length <= 0) {
+      getGifts().then(res => {
+        if (res) {
+          this.setState({
+            loading: false,
+            gifts: res
+          });
+        }
+      });
+    }
+
+    if (this.state.products.length <= 0) {
+      getProducts().then(res => {
+        if (res) {
+          this.setState({
+            loading: false,
+            products: res
+          });
+        }
+      });
+    }
   }
   deleteProductOnClickHandler = params => {
     const id = params[0];
@@ -151,6 +157,19 @@ class Overview extends Component {
                 Gaver
               </ViewChangerBTN>
             </NavLink>
+            <NavLink to="/overview/plukliste">
+              <ViewChangerBTN
+                variant="contained"
+                size="large"
+                color={
+                  window.location.pathname === "/overview/plukliste"
+                    ? "primary"
+                    : "default"
+                }
+              >
+                Pluklister
+              </ViewChangerBTN>
+            </NavLink>
           </Col>
           <Col xs="4" className="float-right">
             <SearchField onChange={this.searchOnChange} />
@@ -161,7 +180,7 @@ class Overview extends Component {
             <Route
               exact
               path="/overview/products"
-              component={() => (
+              component={({ match }) => (
                 <ProductTable
                   coloumnHeaders={productsHeader}
                   dataRows={products}
@@ -178,24 +197,32 @@ class Overview extends Component {
                   ]}
                   getRowId={row => row.productId}
                   editable
+                  active={match}
                 />
               )}
             />
             <Route
               exact
               path="/overview/gifts"
-              component={() => (
+              component={({ match }) => (
                 <GiftTable
                   coloumnHeaders={giftsHeader}
                   dataRows={gifts}
+                  products={products}
                   searchInputValue={searchInputValue}
                   groupOnColumn="giftId"
                   loading={gifts.length <= 0}
                   getRowId={row => row.giftId}
                   setGifts={this.setGifts}
                   editable
+                  active={match}
                 />
               )}
+            />
+            <Route
+              exact
+              path="/overview/plukliste"
+              component={({ match }) => <OrdersTable active={match} />}
             />
           </Switch>
         </Row>

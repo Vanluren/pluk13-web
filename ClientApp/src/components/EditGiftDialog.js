@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import {
   Dialog,
@@ -28,7 +28,7 @@ import {
 } from "@devexpress/dx-react-grid";
 import { Container, Row, Col } from "reactstrap";
 
-const AddProductToGiftDialog = props => {
+const EditGiftDialog = props => {
   const productsHeader = [
     { name: "productId", disablePadding: false, title: "Id" },
     { name: "productTitle", disablePadding: false, title: "Titel" }
@@ -37,7 +37,24 @@ const AddProductToGiftDialog = props => {
   const [selection, changeSelection] = useState([]);
   const [giftTitle, setTitle] = useState("");
   const [contents, addToContents] = useState({});
-  const saveGift = () => {
+  useEffect(() => {
+    if (props.giftToEdit) {
+      setTitle(props.giftToEdit.giftTitle);
+      changeSelection(
+        props.giftToEdit.contents.map(product => {
+          return props.products.findIndex(
+            p => p.productId === product.productId
+          );
+        })
+      );
+      let conts = {};
+      Object.values(props.giftToEdit.contents).forEach(
+        p => (conts[p.productId] = p.productQuantity)
+      );
+      addToContents(conts);
+    }
+  }, [props.giftToEdit]);
+  const patchGift = () => {
     if (giftTitle === "") {
       return setError({
         hasError: true,
@@ -49,8 +66,8 @@ const AddProductToGiftDialog = props => {
         errorText: "Gaven skal have indhold!"
       });
     }
-    return fetch("/api/gifts", {
-      method: "POST",
+    return fetch(`/api/gifts/${props.giftToEdit.giftId}/contents`, {
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         giftTitle: giftTitle,
@@ -63,7 +80,7 @@ const AddProductToGiftDialog = props => {
       .catch(err => setError({ hasError: true, errorText: err }));
   };
   const renderChosenProducts = () => {
-    const { products } = props;
+    const { products, giftToEdit } = props;
     if (selection.length <= 0) {
       return <NoDataWrapper>Ingen produkter valgt!</NoDataWrapper>;
     }
@@ -101,7 +118,7 @@ const AddProductToGiftDialog = props => {
         <Container>
           <Row>
             <Col>
-              <h2>Opret ny gave</h2>
+              <h2>Ret gave</h2>
             </Col>
           </Row>
           <Row>
@@ -151,7 +168,7 @@ const AddProductToGiftDialog = props => {
             </Col>
             <Col xs="6">
               <ContentsWrapper>
-                {selection.length > 0 && (
+                {props.giftToEdit && props.giftToEdit.contents.length > 0 && (
                   <Row>
                     <Col>
                       <ContentHeader>Indhold:</ContentHeader>
@@ -174,7 +191,7 @@ const AddProductToGiftDialog = props => {
           >
             Anuller
           </ActionBTN>
-          <ActionBTN onClick={saveGift} color="primary" variant="contained">
+          <ActionBTN onClick={patchGift} color="primary" variant="contained">
             Gem Gave
           </ActionBTN>
         </Row>
@@ -232,4 +249,4 @@ const NoDataWrapper = styled.div`
 const ActionBTN = MUIStyled(Button)({
   margin: "5px"
 });
-export default AddProductToGiftDialog;
+export default EditGiftDialog;
