@@ -82,29 +82,6 @@ class Overview extends Component {
       .then(res => res.json())
       .then(res => this.setState({ products: res }));
   };
-  newProductOnClick = params => {
-    const body = {
-      title: null,
-      location: null,
-      brand: null,
-      otherInfo: null,
-      size: null,
-      type: null,
-      ...params[0]
-    };
-
-    fetch(`/api/products`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
-    })
-      .then(res => res.json())
-      .then(res => {
-        this.setState({
-          products: [...this.state.products, res]
-        });
-      });
-  };
 
   searchOnChange = event => {
     this.setState({ searchInputValue: event.target.value });
@@ -113,6 +90,11 @@ class Overview extends Component {
   setGifts = newGifts => {
     this.setState({
       gifts: newGifts
+    });
+  };
+  setProducts = newProds => {
+    this.setState({
+      products: [...this.state.products, newProds]
     });
   };
 
@@ -186,7 +168,6 @@ class Overview extends Component {
                   dataRows={products}
                   searchInputValue={searchInputValue}
                   loading={products.length <= 0 || loading}
-                  addNewFunc={this.newProductOnClick}
                   changedFunc={this.editProductOnClickHandler}
                   deleteFunc={this.deleteProductOnClickHandler}
                   disabledInEditing={[
@@ -198,6 +179,7 @@ class Overview extends Component {
                   getRowId={row => row.productId}
                   editable
                   active={match}
+                  setProducts={this.setProducts}
                 />
               )}
             />

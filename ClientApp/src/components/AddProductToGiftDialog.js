@@ -105,22 +105,6 @@ const AddProductToGiftDialog = props => {
             </Col>
           </Row>
           <Row>
-            <Col xs={{ size: 6, offset: 6 }}>
-              <TextField
-                required
-                id="outlined-required"
-                label="Gave titel"
-                value={giftTitle}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-                InputProps={{
-                  onChange: event => setTitle(event.target.value)
-                }}
-              />
-            </Col>
-          </Row>
-          <Row>
             <Col xs="6">
               <Paper>
                 <Grid columns={productsHeader} rows={props.products}>
@@ -150,16 +134,36 @@ const AddProductToGiftDialog = props => {
               </Paper>
             </Col>
             <Col xs="6">
-              <ContentsWrapper>
-                {selection.length > 0 && (
-                  <Row>
-                    <Col>
-                      <ContentHeader>Indhold:</ContentHeader>
-                    </Col>
-                  </Row>
-                )}
-                {renderChosenProducts()}
-              </ContentsWrapper>
+              <Row>
+                <Col>
+                  <TextField
+                    required
+                    id="outlined-required"
+                    label="Gave titel"
+                    value={giftTitle}
+                    margin="normal"
+                    variant="outlined"
+                    fullWidth
+                    InputProps={{
+                      onChange: event => setTitle(event.target.value)
+                    }}
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <ContentsWrapper>
+                    {selection.length > 0 && (
+                      <Row>
+                        <Col>
+                          <ContentHeader>Indhold:</ContentHeader>
+                        </Col>
+                      </Row>
+                    )}
+                    {renderChosenProducts()}
+                  </ContentsWrapper>
+                </Col>
+              </Row>
             </Col>
           </Row>
         </Container>
@@ -195,7 +199,8 @@ const Error = styled.span`
 `;
 
 const ContentsWrapper = MUIStyled(Paper)({
-  height: "100%"
+  height: "350px",
+  overflowY: "scroll"
 });
 const ContentLine = styled.div`
   border-top: 1px solid #c3c3c3;
