@@ -20,7 +20,6 @@ namespace pluk13_web.Helpers
             try 
             {
                 dbConnection.Open();
-                Console.WriteLine("MySQL version : {0}", dbConnection.ServerVersion);
                 return true;
             }
             catch (MySqlException error)

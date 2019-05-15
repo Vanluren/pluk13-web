@@ -20,8 +20,7 @@ import {
   IntegratedFiltering
 } from "@devexpress/dx-react-grid";
 import { getProducts, getGifts } from "../util/dataFetcher";
-import SearchField from "../components/SearchField";
-
+import { CircularProgress } from "@material-ui/core";
 class AddOrderView extends Component {
   constructor(props) {
     super(props);
@@ -221,7 +220,21 @@ class AddOrderView extends Component {
                       onSelectionChange={this.selectGift}
                     />
                     <IntegratedPaging />
-                    <Table />
+                    {gifts && gifts.length <= 0 ? (
+                      <Table
+                        bodyComponent={() => (
+                          <tbody>
+                            <LoaderWrapper>
+                              <td style={{ left: "45%", position: "relative" }}>
+                                <StyledLoader />
+                              </td>
+                            </LoaderWrapper>
+                          </tbody>
+                        )}
+                      />
+                    ) : (
+                      <Table />
+                    )}
                     <TableHeaderRow />
                     <Toolbar />
                     <SearchPanel />
@@ -248,7 +261,21 @@ class AddOrderView extends Component {
                       onSelectionChange={this.selectProduct}
                     />
                     <IntegratedPaging />
-                    <Table />
+                    {products && products.length <= 0 ? (
+                      <Table
+                        bodyComponent={() => (
+                          <tbody>
+                            <LoaderWrapper>
+                              <td style={{ left: "45%", position: "relative" }}>
+                                <StyledLoader />
+                              </td>
+                            </LoaderWrapper>
+                          </tbody>
+                        )}
+                      />
+                    ) : (
+                      <Table />
+                    )}
                     <TableHeaderRow />
                     <Toolbar />
                     <SearchPanel />
@@ -395,4 +422,12 @@ const Footer = styled.div`
 const ActionBTN = MUIStyled(Button)({
   margin: "5px"
 });
+
+const LoaderWrapper = styled.tr`
+  left: 50%;
+  position: relative;
+`;
+const StyledLoader = styled(CircularProgress)`
+  margin: 25px;
+`;
 export default AddOrderView;

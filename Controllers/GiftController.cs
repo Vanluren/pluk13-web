@@ -61,7 +61,7 @@ namespace pluk13_web.Controllers
                     return gift;
                 }
             }
-            return gift;
+            return null;
         }
 
         public List<Gift> GetAllGifts()
@@ -133,7 +133,6 @@ namespace pluk13_web.Controllers
                     Rows.Add(string.Format("({0},{1}, {2})", giftId, product.Key, product.Value));
                 }
                 statement += String.Join(",", Rows) + ";";
-                Console.WriteLine(statement);
                 command = new MySqlCommand(statement, conn);
                 conn.Open();
                 command.CommandType = CommandType.Text;
