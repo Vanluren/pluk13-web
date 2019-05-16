@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import {
   Dialog,
-  DialogTitle,
   DialogActions,
   Button,
   DialogContent,
@@ -49,12 +48,17 @@ const AddProductToGiftDialog = props => {
         errorText: "Gaven skal have indhold!"
       });
     }
+    const toAdd = {};
+    selection.map(
+      idx =>
+        (toAdd[props.products[idx].productId] = contents[props.products[idx]])
+    );
     return fetch("/api/gifts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         giftTitle: giftTitle,
-        contents: { ...contents }
+        contents: toAdd
       })
     })
       .then(res => res.json())
@@ -74,7 +78,7 @@ const AddProductToGiftDialog = props => {
           <Title xs={9}>{products[id].productTitle} </Title>
           <Quantity xs={2}>
             <QuantInput
-              value={contents[products[id].productId]}
+              value={1}
               onChange={event =>
                 addToContents({
                   ...contents,
@@ -105,7 +109,7 @@ const AddProductToGiftDialog = props => {
             </Col>
           </Row>
           <Row>
-            <Col xs="6">
+            <TableCol xs="6">
               <Paper>
                 <Grid columns={productsHeader} rows={props.products}>
                   <SearchState />
@@ -117,8 +121,7 @@ const AddProductToGiftDialog = props => {
                       changeSelection(selected);
                       selected.map(id =>
                         addToContents({
-                          ...contents,
-                          [props.products[id].productId]: 1
+                          [props.products[id]]: 1
                         })
                       );
                     }}
@@ -127,12 +130,12 @@ const AddProductToGiftDialog = props => {
                   <Table />
                   <TableHeaderRow />
                   <Toolbar />
-                  <SearchPanel />
+                  <SearchPanel messages={{ search: "Søg.." }} />
                   <PagingPanel />
                   <TableSelection selectByRowClick highlightRow />
                 </Grid>
               </Paper>
-            </Col>
+            </TableCol>
             <Col xs="6">
               <Row>
                 <Col>
@@ -199,7 +202,7 @@ const Error = styled.span`
 `;
 
 const ContentsWrapper = MUIStyled(Paper)({
-  height: "350px",
+  height: "365px",
   overflowY: "scroll"
 });
 const ContentLine = styled.div`
@@ -211,6 +214,9 @@ const ContentLine = styled.div`
 `;
 const Id = styled(Col)`
   text-align: left;
+`;
+const TableCol = styled(Col)`
+  margin-top: 15px;
 `;
 const Title = styled(Col)`
   text-align: left;

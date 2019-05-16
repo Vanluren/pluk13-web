@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import {
   Dialog,
-  DialogTitle,
   DialogActions,
   Button,
   DialogContent,
@@ -66,12 +65,21 @@ const EditGiftDialog = props => {
         errorText: "Gaven skal have indhold!"
       });
     }
+    const toAdd = {};
+    selection.map(
+      idx =>
+        (toAdd[props.products[idx].productId] =
+          contents[props.products[idx].productId])
+    );
+    Object.keys(contents).forEach(id =>
+      toAdd.hasOwnProperty(id) ? null : (toAdd[id] = 0)
+    );
     return fetch(`/api/gifts/${props.giftToEdit.giftId}/contents`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         giftTitle: giftTitle,
-        contents: { ...contents }
+        contents: toAdd
       })
     })
       .then(res => res.json())
@@ -80,7 +88,7 @@ const EditGiftDialog = props => {
       .catch(err => setError({ hasError: true, errorText: err }));
   };
   const renderChosenProducts = () => {
-    const { products, giftToEdit } = props;
+    const { products } = props;
     if (selection.length <= 0) {
       return <NoDataWrapper>Ingen produkter valgt!</NoDataWrapper>;
     }
@@ -122,23 +130,7 @@ const EditGiftDialog = props => {
             </Col>
           </Row>
           <Row>
-            <Col xs={{ size: 6, offset: 6 }}>
-              <TextField
-                required
-                id="outlined-required"
-                label="Gave titel"
-                value={giftTitle}
-                margin="normal"
-                variant="outlined"
-                fullWidth
-                InputProps={{
-                  onChange: event => setTitle(event.target.value)
-                }}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col xs="6">
+            <TableCol xs="6">
               <Paper>
                 <Grid columns={productsHeader} rows={props.products}>
                   <SearchState />
@@ -165,18 +157,34 @@ const EditGiftDialog = props => {
                   <TableSelection selectByRowClick highlightRow />
                 </Grid>
               </Paper>
-            </Col>
+            </TableCol>
             <Col xs="6">
-              <ContentsWrapper>
-                {props.giftToEdit && props.giftToEdit.contents.length > 0 && (
-                  <Row>
-                    <Col>
-                      <ContentHeader>Indhold:</ContentHeader>
-                    </Col>
-                  </Row>
-                )}
-                {renderChosenProducts()}
-              </ContentsWrapper>
+              <Row>
+                <TextField
+                  required
+                  id="outlined-required"
+                  label="Gave titel"
+                  value={giftTitle}
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                  InputProps={{
+                    onChange: event => setTitle(event.target.value)
+                  }}
+                />
+              </Row>
+              <Row>
+                <ContentsWrapper>
+                  {props.giftToEdit && props.giftToEdit.contents.length > 0 && (
+                    <Row>
+                      <Col>
+                        <ContentHeader>Indhold:</ContentHeader>
+                      </Col>
+                    </Row>
+                  )}
+                  {renderChosenProducts()}
+                </ContentsWrapper>
+              </Row>
             </Col>
           </Row>
         </Container>
@@ -212,7 +220,8 @@ const Error = styled.span`
 `;
 
 const ContentsWrapper = MUIStyled(Paper)({
-  height: "100%"
+  height: "365px",
+  overflowY: "scroll"
 });
 const ContentLine = styled.div`
   border-top: 1px solid #c3c3c3;
@@ -249,4 +258,7 @@ const NoDataWrapper = styled.div`
 const ActionBTN = MUIStyled(Button)({
   margin: "5px"
 });
+const TableCol = styled(Col)`
+  margin-top: 15px;
+`;
 export default EditGiftDialog;

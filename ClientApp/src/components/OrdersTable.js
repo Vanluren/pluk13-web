@@ -2,15 +2,19 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import { withRouter } from "react-router";
 import { Paper, Button, CircularProgress } from "@material-ui/core";
+import { Getter } from "@devexpress/dx-react-core";
 import {
   Grid,
   Table,
-  TableHeaderRow
+  TableHeaderRow,
+  TableEditColumn,
+  TableEditRow
 } from "@devexpress/dx-react-grid-material-ui";
 import {
   SearchState,
   IntegratedFiltering,
-  SelectionState
+  SelectionState,
+  EditingState
 } from "@devexpress/dx-react-grid";
 import { Container, Row, Col } from "reactstrap";
 
@@ -20,7 +24,11 @@ class OrdersTable extends Component {
     this.state = {
       columns: [
         { name: "orderId", disablePadding: false, title: "Id" },
-        { name: "createdAt", disablePadding: false, title: "Dato" }
+        { name: "createdAt", disablePadding: false, title: "Oprettet" }
+      ],
+      columnExtension: [
+        { columnName: "orderId", width: 135 },
+        { columnName: "createdAt", width: 810, wordWrapEnabled: true }
       ]
     };
   }
@@ -41,8 +49,16 @@ class OrdersTable extends Component {
       />
     );
   };
+
+  EditCell = ({ children, row, ...restProps }) => {
+    return (
+      <TableEditColumn.Cell row={row} {...restProps}>
+        <Button color="primary">Vis</Button>
+      </TableEditColumn.Cell>
+    );
+  };
   render() {
-    const { columns } = this.state;
+    const { columns, columnExtension } = this.state;
     const { orders, searchInputValue, loading } = this.props;
     return (
       <Container fluid>
@@ -70,6 +86,7 @@ class OrdersTable extends Component {
                 rows={orders}
                 getRowId={row => row.orderId}
               >
+                <EditingState onCommitChanges={() => {}} />
                 <SearchState value={searchInputValue} />
                 <SelectionState />
                 <IntegratedFiltering />
@@ -86,9 +103,30 @@ class OrdersTable extends Component {
                     )}
                   />
                 ) : (
-                  <Table rowComponent={this.OrderRow} />
+                  <Table
+                    rowComponent={this.OrderRow}
+                    columnExtensions={columnExtension}
+                  />
                 )}
                 <TableHeaderRow />
+                <TableEditRow />
+                <TableEditColumn cellComponent={this.EditCell} />
+                <Getter
+                  name="tableColumns"
+                  computed={({ tableColumns }) => {
+                    const result = [
+                      ...tableColumns.filter(
+                        c => c.type !== TableEditColumn.COLUMN_TYPE
+                      ),
+                      {
+                        key: "editCommand",
+                        type: TableEditColumn.COLUMN_TYPE,
+                        width: 70
+                      }
+                    ];
+                    return result;
+                  }}
+                />
               </Grid>
             </Paper>
           </Col>
