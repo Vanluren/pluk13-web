@@ -87,7 +87,6 @@ const AddProductDialog = props => {
               <Row>
                 <Col>
                   <StyledInput
-                    required
                     id="outlined-required"
                     label="Størrelse"
                     value={values.size}
@@ -99,7 +98,6 @@ const AddProductDialog = props => {
                 </Col>
                 <Col>
                   <StyledInput
-                    required
                     id="outlined-required"
                     label="Mærke"
                     value={values.brand}
@@ -113,7 +111,6 @@ const AddProductDialog = props => {
               <Row>
                 <Col>
                   <StyledInput
-                    required
                     id="outlined-required"
                     label="Andet"
                     value={values.otherInfo}
