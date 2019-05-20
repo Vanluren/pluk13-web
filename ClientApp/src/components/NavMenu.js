@@ -1,49 +1,87 @@
-import React, { Component } from 'react';
-import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
-import { Link } from 'react-router-dom';
-import './NavMenu.css';
+import React, { Component } from "react";
+import {
+  Collapse,
+  Container,
+  Navbar,
+  NavbarBrand,
+  NavbarToggler,
+  NavItem,
+  NavLink
+} from "reactstrap";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
 
 export class NavMenu extends Component {
   static displayName = NavMenu.name;
 
-  constructor (props) {
+  constructor(props) {
     super(props);
-
     this.toggleNavbar = this.toggleNavbar.bind(this);
     this.state = {
       collapsed: true
     };
   }
 
-  toggleNavbar () {
+  toggleNavbar() {
     this.setState({
       collapsed: !this.state.collapsed
     });
   }
 
-  render () {
+  render() {
     return (
       <header>
-        <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" light>
+        <NavContainer
+          className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3"
+          light
+        >
           <Container>
-            <NavbarBrand tag={Link} to="/">pluk13_web</NavbarBrand>
+            <NavBranding tag={Link} to="/">
+              pluk13_web
+            </NavBranding>
             <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
-            <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
+            <Collapse
+              className="d-sm-inline-flex flex-sm-row-reverse"
+              isOpen={!this.state.collapsed}
+              navbar
+            >
               <ul className="navbar-nav flex-grow">
                 <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
+                  <NavLink
+                    tag={Link}
+                    className="text-dark"
+                    active={window.location.pathname === "/"}
+                    to="/"
+                  >
+                    Opret Plukliste
+                  </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/counter">Counter</NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink tag={Link} className="text-dark" to="/fetch-data">Fetch data</NavLink>
+                  <NavLink
+                    tag={Link}
+                    className="text-dark"
+                    active={window.location.pathname === "/overview/"}
+                    to="/overview/products"
+                  >
+                    Oversigt
+                  </NavLink>
                 </NavItem>
               </ul>
             </Collapse>
           </Container>
-        </Navbar>
+        </NavContainer>
       </header>
     );
   }
 }
+
+const NavContainer = styled(Navbar)`
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+`;
+
+const NavBranding = styled(NavbarBrand)`
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+`;
+const StyledNavItem = styled(NavItem)``;
