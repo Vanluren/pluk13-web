@@ -209,12 +209,9 @@ class AddOrderView extends Component {
                 <Paper>
                   <ContentHeader>Gaver</ContentHeader>
                   <Grid columns={giftColumns} rows={gifts}>
-                    <PagingState defaultCurrentPage={0} pageSize={5} />
-                    <SearchState
-                      value={giftSearchValue}
-                      onValueChange={this.searchGifts}
-                    />
+                    <SearchState />
                     <IntegratedFiltering />
+                    <PagingState defaultCurrentPage={0} pageSize={5} />
                     <SelectionState
                       selection={selectedGifts}
                       onSelectionChange={this.selectGift}
@@ -249,11 +246,7 @@ class AddOrderView extends Component {
                 <Paper>
                   <ContentHeader>Produkter</ContentHeader>
                   <Grid columns={productColumns} rows={products}>
-                    <SearchState value={productSearchValue} />
-                    <SearchState
-                      value={productSearchValue}
-                      onValueChange={this.searchProducts}
-                    />
+                    <SearchState />
                     <IntegratedFiltering />
                     <PagingState defaultCurrentPage={0} pageSize={5} />
                     <SelectionState
