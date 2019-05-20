@@ -115,7 +115,7 @@ const AddProductDialog = props => {
                   <StyledInput
                     required
                     id="outlined-required"
-                    label="Gave titel"
+                    label="Andet"
                     value={values.otherInfo}
                     margin="normal"
                     variant="outlined"
