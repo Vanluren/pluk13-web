@@ -94,7 +94,7 @@ class AddOrderView extends Component {
     }
     return selectedProds.map(id => (
       <ContentLine key={id}>
-        <Id xs={2}>{products[id].productId} |</Id>{" "}
+        <Id xs={2}>{products[id].productId}</Id>{" "}
         <Title xs={9}>{products[id].productTitle} </Title>
         <Quantity xs={2}>
           <QuantInput
@@ -121,7 +121,7 @@ class AddOrderView extends Component {
     }
     return selectedGifts.map(id => (
       <ContentLine key={id}>
-        <Id xs={2}>{gifts[id].giftId} |</Id>{" "}
+        <Id xs={2}>{gifts[id].giftId}</Id>{" "}
         <Title xs={9}>{gifts[id].giftTitle} </Title>
         <Quantity xs={2}>
           <QuantInput
