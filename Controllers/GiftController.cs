@@ -119,7 +119,7 @@ namespace pluk13_web.Controllers
             try
             {
                 var conn = dbHelper.dbConnection;
-                string statement = "INSERT INTO gifts(gift_title) VALUES (@gift_title); select last_insert_id();";
+                string statement = "INSERT INTO Gifts(gift_title) VALUES (@gift_title); select last_insert_id();";
                 MySqlCommand command = new MySqlCommand(statement, conn);
                 conn.Open();
                 command.Parameters.AddWithValue("@gift_title", title);
