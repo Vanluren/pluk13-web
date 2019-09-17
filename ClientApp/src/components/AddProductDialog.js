@@ -5,8 +5,7 @@ import {
   DialogActions,
   Button,
   DialogContent,
-  TextField,
-  Paper
+  TextField
 } from "@material-ui/core";
 import { styled as MUIStyled } from "@material-ui/styles";
 import { Container, Row, Col } from "reactstrap";

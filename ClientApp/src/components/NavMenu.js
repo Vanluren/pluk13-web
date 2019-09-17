@@ -84,4 +84,3 @@ const NavBranding = styled(NavbarBrand)`
   text-align: center;
   word-break: break-all;
 `;
-const StyledNavItem = styled(NavItem)``;

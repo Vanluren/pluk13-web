@@ -196,9 +196,7 @@ class AddOrderView extends Component {
       giftColumns,
       gifts,
       hasError,
-      error,
-      productSearchValue,
-      giftSearchValue
+      error
     } = this.state;
     return (
       <Container fluid>
